@@ -17,6 +17,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ThemeContext from "../ThemeContext";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
+import MyModal from "./MyModal";
 const BoardsList = () => {
   const { theme, updateTheme } = useContext(ThemeContext);
   const queryClient = useQueryClient();
@@ -64,21 +65,19 @@ const BoardsList = () => {
         <div className="flex items-center  space-x-3 ">
           <h1 className="">Имя пользователя: {user.name}</h1>
 
-          <Modal
+          <MyModal
             open={openAddBoardModal}
             onClose={handleCloseAddBoardModal}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
+            header="Новая доска"
           >
-            <Box className="myModal">
-              <h1>Новая доска</h1>
+
 
               <form onSubmit={addBoard} className="flex flex-col items-start">
                 <input required type="text" name="title" placeholder="title" />
                 <button type="submit">Добавить доску</button>
               </form>
-            </Box>
-          </Modal>
+
+          </MyModal>
         </div>
 
         <div className="flex items-center">

@@ -17,18 +17,20 @@ import {
 } from "../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import AddIcon from "@mui/icons-material/Add";
 import Task from "./Task";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import LogoutIcon from "@mui/icons-material/Logout";
-import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
-
+import ArchiveIcon from "@mui/icons-material/Archive";
+import LeaderboardIcon from "@mui/icons-material/Leaderboard";
+import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import Avatar from "@mui/material/Avatar";
 import ThemeContext from "../ThemeContext";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import MyModal from "./MyModal";
 
 const Board = () => {
   const { theme, updateTheme } = useContext(ThemeContext);
@@ -195,6 +197,18 @@ const Board = () => {
   };
   return (
     <div>
+      <MyModal
+        open={openAddSectionModal}
+        onClose={handleCloseAddSectionModal}
+        header="Новая секция"
+      >
+        <form onSubmit={addState} className="flex flex-col items-start">
+          <input className="" type="text" name="title" placeholder="title" />
+          <button type="submit" className="">
+            Добавить секцию
+          </button>
+        </form>
+      </MyModal>
       <div className="navbar h-[50px] ">
         <div className="flex items-center">
           <ArrowBackIcon
@@ -238,22 +252,10 @@ const Board = () => {
       </div>
 
       <div className="board-header  h-[150px] p-[15px]">
-        <h1 className=" text-5xl font-bold">
-          {board.title}#{board.id}
-        </h1>
-        <div> {isOwner ? "Создатель" : "Обычный исполнитель"}</div>
-        <div className="panel flex flex-row items-center">
-          {isOwner ? (
-            <>
-              <button onClick={handleOpenAddSectionModal}>
-                Добавить секцию
-              </button>
-              <button onClick={handleOpenAddUserModal}>
-                Добавить пользователя
-              </button>
-            </>
-          ) : null}
-
+        <div className="flex items-center">
+          <h1 className=" text-5xl font-bold">
+            {board.title}#{board.id}
+          </h1>
           <div className="avatar-overlay flex flex-row">
             {users
               .sort((a, b) => a.id - b.id)
@@ -261,49 +263,50 @@ const Board = () => {
                 <Avatar key={index} {...stringAvatar(user.name)} />
               ))}
           </div>
+        </div>
 
-          <Modal
-            open={openAddSectionModal}
-            onClose={handleCloseAddSectionModal}
-          >
-            <Box className="myModal">
-              <h1>Новая секция</h1>
-              <form onSubmit={addState} className="flex flex-col items-start">
-                <input
-                  className=""
-                  type="text"
-                  name="title"
-                  placeholder="title"
-                />
-                <button type="submit" className="">
-                  Добавить секцию
-                </button>
-              </form>
-            </Box>
-          </Modal>
+        <div> {isOwner ? "Создатель" : "Обычный исполнитель"}</div>
+        <div className="panel flex flex-row items-center">
+          {isOwner ? (
+            <>
+              <button onClick={handleOpenAddSectionModal}>
+                <ViewColumnIcon /> Добавить секцию
+              </button>
+              <button onClick={handleOpenAddUserModal}>
+                <PersonAddIcon /> Добавить пользователя
+              </button>
+              <button>
+                <LeaderboardIcon /> Статистика
+              </button>
+              <button>
+                <ArchiveIcon /> Архив
+              </button>
+            </>
+          ) : null}
         </div>
       </div>
       <div>
-        <Modal open={openAddUserModal} onClose={handleCloseAddUserModal}>
-          <Box className="myModal">
-            <h1>Добавить пользователя к доске</h1>
-            <form
-              onSubmit={(event) => addUserInBoard(event, boardId)}
-              className="flex flex-col items-start"
-            >
-              <input
-                required
-                className="focus:outline-none bg-gray border-bw-60"
-                type="text"
-                name="userId"
-                placeholder="userId"
-              />
-              <button type="submit" className="">
-                Добавить пользователя
-              </button>
-            </form>
-          </Box>
-        </Modal>
+        <MyModal
+          open={openAddUserModal}
+          onClose={handleCloseAddUserModal}
+          header="Добавить пользователя к доске"
+        >
+          <form
+            onSubmit={(event) => addUserInBoard(event, boardId)}
+            className=""
+          >
+            <input
+              required
+              className=""
+              type="text"
+              name="userId"
+              placeholder="userId"
+            />
+            <button type="submit" className="">
+              Добавить пользователя
+            </button>
+          </form>
+        </MyModal>
       </div>
       <div className="flex flex-row h-[calc(100vh-200px)] p-[15px]">
         {states
@@ -324,33 +327,34 @@ const Board = () => {
                     onClick={() => handleOpenTaskModal(state.id)}
                   />
 
-                  <Modal open={openTaskModal} onClose={handleCloseTaskModal}>
-                    <Box className="myModal">
-                      <h1>Новая задача</h1>
-                      <form
-                        onSubmit={(event) => addTask(event, state.id)}
-                        className="flex flex-col items-start"
-                      >
-                        <input
-                          required
-                          className="focus:outline-none bg-gray border-b   w-60"
-                          type="text"
-                          name="title"
-                          placeholder="title"
-                        />
-                        <input
-                          required
-                          className="focus:outline-none bg-gray border-b  w-60"
-                          type="text"
-                          name="description"
-                          placeholder="description"
-                        />
-                        <button type="submit" className="">
-                          Добавить задачу
-                        </button>
-                      </form>
-                    </Box>
-                  </Modal>
+                  <MyModal
+                    open={openTaskModal}
+                    onClose={handleCloseTaskModal}
+                    header="Новая задача"
+                  >
+                    <form
+                      onSubmit={(event) => addTask(event, state.id)}
+                      className="flex flex-col items-start"
+                    >
+                      <input
+                        required
+                        className=""
+                        type="text"
+                        name="title"
+                        placeholder="title"
+                      />
+                      <input
+                        required
+                        className=""
+                        type="text"
+                        name="description"
+                        placeholder="description"
+                      />
+                      <button type="submit" className="">
+                        Добавить задачу
+                      </button>
+                    </form>
+                  </MyModal>
 
                   <DeleteForeverIcon
                     className="ml-2 cursor-pointer hover:text-red-500"

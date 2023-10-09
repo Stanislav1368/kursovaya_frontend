@@ -1,11 +1,9 @@
-
 :root {
-
   --primary-color-dark: #202020;
-  --secondary-color-dark: #222222;    
+  --secondary-color-dark: #222222;
   --background-color-dark: #131312;
   --text-color-dark: rgba(255, 255, 255, 0.87);
-  --accent-color-dark: #646cff;;
+  --accent-color-dark: #646cff;
   --border-color-dark: #707070;
   --box-shadow-size-dark: 0 0 0 1px;
 
@@ -13,7 +11,7 @@
   --secondary-color-light: #ffffff;
   --background-color-light: #edeef0;
   --text-color-light: #213547;
-  --accent-color-light: #646cff;;
+  --accent-color-light: #646cff;
   --border-color-light: #dce1e6;
   --box-shadow-size-light: 0 0 0 1px;
 }
@@ -26,7 +24,7 @@
   --text-color: var(--text-color-light);
   --accent-color: var(--accent-color-light);
   --border-color: var(--border-color-light);
-  --box-shadow-size: var(--box-shadow-size-light)
+  --box-shadow-size: 0 0 0 1px;
 }
 
 .App.dark {
@@ -37,7 +35,7 @@
   --text-color: var(--text-color-dark);
   --accent-color: var(--accent-color-dark);
   --border-color: var(--border-color-dark);
-  --box-shadow-size: var(--box-shadow-size-dark)
+  --box-shadow-size: var(--box-shadow-size-dark);
 }
 
 .panel :not(:first-child) {
@@ -47,10 +45,6 @@
   padding: 10px;
 }
 
-
-
-
-
 .App {
   background-color: var(--background-color);
   color: var(--text-color);
@@ -59,58 +53,49 @@
   height: calc(100vh);
 }
 
-
-
-
-
-
 .contentboard {
   height: calc(100vh - 50px);
 }
 
-
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active{
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: var(--text-color);
-    transition: background-color ease-in-out 0s;  
-    box-shadow: inset var(--box-shadow-size) var(--border-color); 
-    background-color: var(--primary-color);
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: var(--text-color);
+  transition: background-color ease-in-out 0s;
+  box-shadow: inset var(--box-shadow-size) var(--border-color);
+  background-color: var(--primary-color);
 }
 
 input {
   border-radius: 8px;
   padding: 5px;
   background-color: var(--secondary-color);
-  box-shadow: var(--box-shadow-size) var(--border-color); 
+  box-shadow: var(--box-shadow-size) var(--border-color);
 }
-form {
-  box-shadow: var(--box-shadow-size) var(--border-color); 
+.form-login {
+  box-shadow: var(--box-shadow-size) var(--border-color);
   border-radius: 12px;
   background-color: var(--primary-color);
 }
 button {
-  
   border-radius: 8px;
-  border: 1px solid transparent;  
+  border: 1px solid transparent;
   font-family: inherit;
-  background-color: var(--secondary-color);
+  background-color: #646cff;
   cursor: pointer;
   transition: border-color 0.25s;
   box-shadow: var(--box-shadow-size) var(--border-color);
-  }
+}
 button:hover {
+  
   color: var(--text-color);
   border-color: var(--accent-color);
-  
 }
 .toggleMode:hover {
   color: var(--text-color);
 }
-
-
 
 .board-header {
   border-bottom: solid 1px var(--border-color);
@@ -131,10 +116,6 @@ button:hover {
   box-shadow: var(--box-shadow-size) var(--border-color);
 }
 
-
-
-
-
 h1 {
   font-size: 48px;
   line-height: 1.1;
@@ -142,16 +123,13 @@ h1 {
 .board {
   background-color: var(--primary-color);
 }
-.column {
-  
-}
-.task  {
+
+.task {
   background-color: var(--primary-color);
   box-shadow: var(--box-shadow-size) var(--border-color);
 }
-.task:hover  {
+.task:hover {
   background-color: var(--secondary-color);
-
 }
 .state {
   border-radius: 4px;
@@ -159,49 +137,67 @@ h1 {
   box-shadow: var(--box-shadow-size) var(--border-color);
 }
 
-
-
 .myModal {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 300px;
-  height: 400px;
-  background-color: var(--primary-color);
-  padding: 10px;
-  border-radius: 4px;
-  border-color: var(--primary-color);
-}
-.myModal h1 {
-  font-size: 1.25rem /* 20px */;
-  line-height: 1.75rem /* 28px */;
-  font-weight: bold;
-  color: var(--text-color);
-}
-.myModal input {
-  margin-top: 15px;
-  border-bottom-width: 1px;
-  width: 250px;
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
   width: 100%;
-  color: var(--text-color);
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow:hidden;
 }
 
-.myModal input:focus {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
+.myModal.open {
+  display: block;
+}
+
+.myModal-content {
+  background-color: var(--background-color);
+  margin: 20% auto;
+  padding: 0px;
+  box-shadow: var(--box-shadow-size) var(--border-color);
+  width: 30%;
+  border-radius: 8px;
+}
+
+
+
+
+.myModal-content .close-button:hover {
+  text-decoration: none;
+  cursor: pointer;
+  color: brown;
+  border: none;
+  box-shadow: none
+}
+
+
+.myModal form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  
+}
+
+.myModal input {
+  margin-bottom: 16px;
+  padding: 8px;
 }
 
 .myModal button {
-  color: var(--text-color);
-  margin-top: 15px;
-  border: none;
-  padding: 5px;
-  justify-content: center;
-  width: 100%;
+  padding: 8px 16px;
   background-color: var(--primary-color);
+  color: var(--text-color);
+
+  cursor: pointer;
+  border-radius: 8px;
+  border: 1px solid transparent;
 }
+
 .myModal button:hover {
-  border: solid;
-  border-width: 1px;
+  color: var(--text-color);
+  border-color: var(--accent-color);
 }
