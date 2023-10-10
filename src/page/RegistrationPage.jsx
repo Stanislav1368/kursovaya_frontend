@@ -10,7 +10,9 @@ const RegistrationPage = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
 
-  const mutation = useMutation((data) => Registration(data), { onSuccess: () =>  navigate("/login")});
+  const mutation = useMutation((data) => Registration(data), {
+    onSuccess: () => navigate("/login"),
+  });
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
@@ -37,37 +39,40 @@ const RegistrationPage = () => {
 
   return (
     <div className="flex items-center justify-center h-[100%]">
-      <form
-        onSubmit={handleRegistration}
-        className=" px-10 flex flex-col justify-between items-center  h-[400px] w-[400px]"
-      >
-        <h1 className="mt-5">РЕГИСТРАЦИЯ</h1>
-        <div className="">
-          <input
-            className="focus:outline-none  w-full p-3"
-            type="email"
-            name="email"
-            placeholder="email"
-          />
-          <input
-            className=" focus:outline-none mt-2 w-full p-3"
-            type="password"
-            name="password"
-            placeholder="password"
-          />
-        </div>
-        <div className="flex flex-col w-full items-center mb-5">
-          <button className="mt-3 p-3 w-full" type="submit">
-            Регистрация
-          </button>
-          {error ? (
-            <span className="text-red-600">Неверная почта или пароль</span>
-          ) : null}
-          <a className=" text-blue-500 underline" href="/login">
-            Логин
-          </a>
-        </div>
-      </form>
+      <div className="form-login flex flex-col justify-between items-center  h-[400px] w-[400px] ">
+        <form
+          onSubmit={handleRegistration}
+          className=" px-10 flex flex-col justify-between items-center  h-full w-full "
+        >
+          <h1 className="mt-5">РЕГИСТРАЦИЯ</h1>
+          <div className="">
+            <input
+              className="focus:outline-none  w-full p-3"
+              type="email"
+              name="email"
+              placeholder="email"
+            />
+            <input
+              className=" focus:outline-none mt-2 w-full p-3"
+              type="password"
+              name="password"
+              placeholder="password"
+            />
+          </div>
+          <div className="flex flex-col w-full items-center mb-5">
+            <button className="mt-3 p-3 w-full" type="submit">
+              Регистрация
+            </button>
+            {error ? (
+              <span className="text-red-600">Неверная почта или пароль</span>
+            ) : null}
+            <a className=" text-blue-500 underline" href="/login">
+              Логин
+            </a>
+          </div>
+        </form>
+        
+      </div>
     </div>
   );
 };

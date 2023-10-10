@@ -10,21 +10,22 @@ const MyModal = ({ open, onClose, children, header }) => {
     };
 
     window.addEventListener("keydown", handleKeyDown);
+    
   }
   return (
-    <div onClick={onClose} className={`myModal ${open ? "open" : ""}`}>
+    <div className={`myModal ${open ? "open" : ""}`}>
       <div className="myModal-content">
-        <div className="pb-[20px] pt-[5px] pl-[20px] pr-[5px]">
+        <div className="pb-[20px] pt-[5px] pl-[20px] pr-[0px]">
           <div className="flex justify-between">
-            <h1 className=" text-2xl">{header}</h1>
+            <div className=" text-2xl">{header}</div>
             <div
-              className="close-button text- xl bold  w-[40px] h-[40px] flex justify-center items-center "
+              className="close-button text-xl bold  w-[50px] h-full flex justify-center items-center "
               onClick={onClose}
             >
               &#10005;
             </div>
           </div>
-          <div className="">{children}</div>
+          <div className="mt-[15px]">{children}</div>
         </div>
       </div>
     </div>

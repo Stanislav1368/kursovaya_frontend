@@ -14,10 +14,12 @@ import {
   fetchUserId,
   fetchUsersByBoard,
   getRoleByBoardId,
+  updateRoleByBoardId,
 } from "../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import SettingsAccessibilityIcon from "@mui/icons-material/SettingsAccessibility";
 import AddIcon from "@mui/icons-material/Add";
 import Task from "./Task";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -59,6 +61,14 @@ const Board = () => {
   const handleCloseAddSectionModal = () => {
     setOpenAddSectionModal(false);
   };
+  const [openAccessSettingsModal, setOpenAccessSettingsModal] = useState(false);
+  const handleOpenAccessSettingsModal = () => {
+    setOpenAccessSettingsModal(true);
+  };
+  const handleCloseAccessSettingsModal = () => {
+    setOpenAccessSettingsModal(false);
+  };
+  const [checkedUsers, setCheckedUsers] = useState({});
   const { boardId } = useParams();
   const queryClient = useQueryClient();
   const { data: userId, isLoading: isUserIdLoading } = useQuery(
@@ -120,6 +130,20 @@ const Board = () => {
     (data) => UpdateTask(userId, boardId, currentStateId, currentTaskId, data),
     { onSuccess: () => queryClient.invalidateQueries(["states"]) }
   );
+  // const UpdateUserPrivilegeMutation = useMutation(
+  //   (newPrivilege) => {updateRoleByBoardId(userId, boardId, newPrivilege), console.log("data: " + data)},
+  //   { onSuccess: () => queryClient.invalidateQueries(["userBoard"]) }
+  // );
+  const handleCheckboxChange = async (e, userId, boardId) => {
+    e.preventDefault();
+    try {
+      updateRoleByBoardId(userId, boardId, e.target.checked);
+      await queryClient.invalidateQueries(["usersBoard"]);   
+    } catch (error) {
+      console.error(error);
+    }
+  }
+    
   const addState = async (event) => {
     event.preventDefault();
     try {
@@ -281,11 +305,57 @@ const Board = () => {
               <button>
                 <ArchiveIcon /> Архив
               </button>
+              <button onClick={handleOpenAccessSettingsModal}>
+                <SettingsAccessibilityIcon /> Настройки доступа
+              </button>
             </>
           ) : null}
         </div>
       </div>
       <div>
+        <MyModal
+          open={openAccessSettingsModal}
+          onClose={handleCloseAccessSettingsModal}
+          header="Права доступа"
+        >
+          <table>
+            <thead>
+              <tr>
+                <th className=" text-left">Имя пользователя</th>
+                <th className=" text-left">Владелец</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user, index) => (
+                <tr key={index}>
+                  <td className="w-1/4">
+                    {user.name}
+                    {user.id === userId ? (
+                      <span className="font-bold underline">(Вы)</span>
+                    ) : (
+                      ""
+                    )}
+                  </td>
+                  <td className="w-1/4 ">
+                    {user.id === userId ? (
+                      <></>
+                    ) : (
+                      <>
+                        <input
+                          type="checkbox"
+                          checked={user.isOwner}
+                          onChange={(e) =>
+                            handleCheckboxChange(e, user.id, boardId)
+                          }
+                        />
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </MyModal>
         <MyModal
           open={openAddUserModal}
           onClose={handleCloseAddUserModal}

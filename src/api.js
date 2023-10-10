@@ -3,8 +3,7 @@ const BASE_URL = "http://localhost:5000"; // Базовый URL API
 
 export async function Login(data) {
   const response = await axios.post(`${BASE_URL}/auth/login`, data);
-  console.log(data);
-  console.log(response.data);
+ 
   const token = response.data.token;
   localStorage.setItem("token", token);
 }
@@ -15,10 +14,11 @@ export const fetchUsersByBoard = async(boardId) => {
   const response = await axios.get(
     `${BASE_URL}/users/byBoardId/${boardId}`
   );
+
   return response.data;
 }
 export async function AddUserInBoard(userId, boardId) {
-  console.log(boardId)
+
   await axios.post(`${BASE_URL}/users/${userId}/boards/${boardId}`);
 }
 export async function AddBoard(data, userId) {
@@ -30,7 +30,7 @@ export async function AddState(data, userId, boardId) {
 }
 
 export async function AddTask(data, userId, boardId, stateId) {
-  console.log(data);
+
   await axios.post(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks`, data);
 }
 export async function DeleteTask(userId, boardId, stateId, taskId) {
@@ -46,7 +46,7 @@ export async function DeleteBoard(userId, boardId) {
 
 
 export async function UpdateTask(userId, boardId, stateId, taskId, updatedData) {
-  console.log(stateId, taskId, updatedData);
+
   await axios.put(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks/${taskId}`, {newStateId: updatedData});
 }
 
@@ -91,7 +91,13 @@ export async function fetchUser() {
 }
 export const getRoleByBoardId = async(userId, boardId) => {
   const response = await axios.get(
-    `${BASE_URL}/users/${userId}/getRoleByBoardId/${boardId}`
+    `${BASE_URL}/users/${userId}/roleByBoardId/${boardId}`
+  );
+  return response.data;
+}
+export const updateRoleByBoardId = async(userId, boardId, updatedData) => {
+  const response = await axios.put(
+    `${BASE_URL}/users/${userId}/roleByBoardId/${boardId}`, {newPrivilege: updatedData}
   );
   return response.data;
 }

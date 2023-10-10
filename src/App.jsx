@@ -8,6 +8,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import RegistrationPage from "./page/RegistrationPage";
 import { useEffect, useState } from "react";
 
+
 const isAuthenticated = () => {
   const token = localStorage.getItem("token");
   return token;
@@ -69,6 +70,7 @@ function App() {
                 </RequireAuth>
               }
             ></Route>
+           
             <Route path="/login" element={<LoginPage />} />
             <Route path="/registration" element={<RegistrationPage />} />
           </Route>
