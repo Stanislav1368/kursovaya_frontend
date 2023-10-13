@@ -41,9 +41,9 @@
 .panel :not(:first-child) {
   margin-left: 15px;
 }
-.panel button {
+/* .panel button {
   padding: 10px;
-}
+} */
 
 .App {
   background-color: var(--background-color);
@@ -89,7 +89,6 @@ button {
   box-shadow: var(--box-shadow-size) var(--border-color);
 }
 button:hover {
-  
   color: var(--text-color);
   border-color: var(--accent-color);
 }
@@ -147,7 +146,7 @@ h1 {
   height: 100%;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.5);
-  overflow:hidden;
+  overflow: hidden;
 }
 
 .myModal.open {
@@ -159,27 +158,23 @@ h1 {
   margin: 20% auto;
   padding: 0px;
   box-shadow: var(--box-shadow-size) var(--border-color);
-  width: 30%;
+  min-width: 400px;
+  max-width: max-content;
   border-radius: 8px;
 }
-
-
-
 
 .myModal-content .close-button:hover {
   text-decoration: none;
   cursor: pointer;
   color: brown;
   border: none;
-  box-shadow: none
+  box-shadow: none;
 }
-
 
 .myModal form {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  
 }
 
 .myModal input {
@@ -188,17 +183,31 @@ h1 {
 }
 
 .myModal button {
-  padding: 8px 16px;
   background-color: var(--primary-color);
   color: var(--text-color);
-
+  margin-bottom: 16px;
+  padding: 8px;
   cursor: pointer;
   border-radius: 8px;
   border: 1px solid transparent;
 }
 
-.myModal button:hover{
+.myModal button:hover {
   color: var(--text-color);
   border-color: var(--accent-color);
 }
-input:focus {outline: none;}
+input:focus {
+  outline: none;
+}
+
+select {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  box-shadow: var(--box-shadow-size) var(--border-color);
+}
+
+select:focus {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  outline: none;
+}

@@ -15,8 +15,7 @@ const MyModal = ({ open, onClose, children, header }) => {
   return (
     <div className={`myModal ${open ? "open" : ""}`}>
       <div className="myModal-content">
-        <div className="pb-[20px] pt-[5px] pl-[20px] pr-[0px]">
-          <div className="flex justify-between">
+        <div className="pb-[20px] pt-[5px] pl-[15px] pr-[ 0px] flex justify-between">
             <div className=" text-2xl">{header}</div>
             <div
               className="close-button text-xl bold  w-[50px] h-full flex justify-center items-center "
@@ -24,9 +23,8 @@ const MyModal = ({ open, onClose, children, header }) => {
             >
               &#10005;
             </div>
-          </div>
-          <div className="mt-[15px]">{children}</div>
         </div>
+        <div className="pl-[15px]">{children}</div>
       </div>
     </div>
   );
