@@ -176,9 +176,20 @@ const Board = () => {
     event.preventDefault();
     try {
       const formData = new FormData(event.target);
-      const fields = Object.fromEntries(formData);
+      const fields = {};
+      for (const [name, value] of formData.entries()) {
+        if (fields[name]) {
+          if (!Array.isArray(fields[name])) {
+            fields[name] = [fields[name]];
+          }
+          fields[name].push(value);
+        } else {
+          fields[name] = value;
+        }
+      }
 
       await AddTask(fields, userId, boardId, selectedStateId);
+      console.log(fields);
       handleCloseTaskModal();
       await queryClient.invalidateQueries(["states"]);
     } catch (error) {
@@ -418,40 +429,33 @@ const Board = () => {
               </tr>
             </thead>
             <tbody>
-              {users.map((user, index) => (
-                <tr key={index}>
-                  <td className="w-1/4">
-                    {user.name}
-                    {user.id === userId ? <span className="font-bold underline">(Вы)</span> : ""}
-                  </td>
-                  <td className="w-1/4">
-                    <div className="py-2">
-                      {user.isOwner ? (
-                        <>
-                          <div>Администратор</div>
-                        </>
-                      ) : // Добавляем условие, используя тернарный оператор
-                      // Если currentRole.isCreate равно false, отображаем текстовую метку, в противном случае отображаем выбор роли
-                      currentRole.isCreate || user.isOwner ? (
-                        <div>{currentRole.name}</div>
-                      ) : (
-                        <select
-                          id="country"
-                          className="block rounded-md  p-[8px]"
-                          value={user.roleId} // Установите значение текущей роли пользователя
-                          onChange={(e) => handleRoleChange(user.id, e.target.value)} // Обработчик изменения роли
-                        >
-                          {roles.map((role, index) => (
-                            <option key={index} value={role.id}>
-                              {role.name}
-                            </option>
-                          ))}
-                        </select>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
+             {users.map((user, index) => (
+  <tr key={index}>
+    <td className="w-1/4">
+      {user.name}
+      {user.isOwner && <span className="font-bold underline">(Вы)</span>}
+      {user.isOwner && <span className="ml-2">Администратор</span>}
+    </td>
+    <td className="w-1/4">
+      <div className="py-2">
+        {user.isOwner ? (
+          <span className="block rounded-md p-[8px]">Администратор</span>
+        ) : (
+          <select
+            id="country"
+            className="block rounded-md p-[8px]"
+            value={user.roleId}
+            onChange={(e) => handleRoleChange(user.id, e.target.value)}
+          >
+            {roles.map((role, index) => (
+              <option key={index} value={role.id}>{role.name}</option>
+            ))}
+          </select>
+        )}
+      </div>
+    </td>
+  </tr>
+))}
             </tbody>
           </table>
         </MyModal>
@@ -468,31 +472,40 @@ const Board = () => {
         {states
           .sort((a, b) => a.id - b.id)
           .map((state) => (
-            <div className="state flex flex-col w-64 mr-4 h-full " key={state.id}>
-              <span className="text-lg font-bold break-words">{state.title}</span>
-              <div className="state-header flex justify-between items-center">
-              <ArrowLeft/>
-                
-                
+            <div className="state flex flex-col w-[350px] mr-4 h-full " key={state.id}>
+              <div className="state-header flex justify-between items-center p-4">
+                <div className="items-center flex">
+                  <ArrowLeft />
+                  <span className="text-lg font-bold break-words">{state.title}</span>
+                </div>
+
                 <div className="flex">
                   {/* ДОДЕЛАТЬ ДОДЕЛАТЬ ДОДЕЛАТЬ ДОДЕЛАТЬ ДОДЕЛАТЬ ДОДЕЛАТЬ ДОДЕЛАТЬ ДОДЕЛАТЬ ДОДЕЛАТЬ ДОДЕЛАТЬ ДОДЕЛАТЬ  */}
                   <MoreVertIcon></MoreVertIcon>
                   <AddIcon className="cursor-pointer hover:text-green-300" onClick={() => handleOpenTaskModal(state.id)} />
-
                   <MyModal open={openTaskModal} onClose={handleCloseTaskModal} header="Новая задача">
                     <form onSubmit={(event) => addTask(event, state.id)} className="flex flex-col items-start">
                       <input required className="" type="text" name="title" placeholder="title" />
                       <input required className="" type="text" name="description" placeholder="description" />
+
+                      <div>
+                        {users.map((user, index) => (
+                          <label key={index} className="">
+                            <input type="checkbox" name="userIds" value={user.id} />
+                            {user.name}
+                          </label>
+                        ))}
+                      </div>
+
                       <button type="submit" className="">
                         Добавить задачу
                       </button>
                     </form>
                   </MyModal>
 
-                  <DeleteForeverIcon className="ml-2 cursor-pointer hover:text-red-500" onClick={() => DeleteStateMutation.mutate(state.id)} /> 
-                  <ArrowRight/>
+                  <DeleteForeverIcon className="ml-2 cursor-pointer hover:text-red-500" onClick={() => DeleteStateMutation.mutate(state.id)} />
+                  <ArrowRight />
                 </div>
-               
               </div>
               <div
                 className="column h-full"
@@ -510,6 +523,7 @@ const Board = () => {
                       onDragLeave={(e) => dragLeaveHandler(e)}
                       onDragStart={(e) => handleDragStart(e, state.id, task.id)}
                       onDragEnd={(e) => handleDragEnd(e)}>
+                      {/* {console.log(task)}  */}
                       <Task userId={userId} boardId={boardId} state={state} task={task} index={index}></Task>
                     </div>
                   ))}

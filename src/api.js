@@ -30,7 +30,6 @@ export async function AddState(data, userId, boardId) {
 }
 
 export async function AddTask(data, userId, boardId, stateId) {
-
   await axios.post(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks`, data);
 }
 export async function DeleteTask(userId, boardId, stateId, taskId) {
@@ -68,6 +67,7 @@ export const fetchStates = async(userId, boardId) => {
   const response = await axios.get(
     `${BASE_URL}/users/${userId}/boards/${boardId}/states`
   );
+  console.log(response.data);
   return response.data;
 }
 
@@ -99,7 +99,7 @@ export const getCurrentRole = async(userId, boardId) => {
   const response = await axios.get(
     `${BASE_URL}/users/${userId}/roleOnBoard/${boardId}`
   );
-  console.log(response.data)
+
   return response.data;
 }
 export const updateRoleByBoardId = async(userId, boardId, updatedData) => {
@@ -113,22 +113,28 @@ export const getRoles = async(boardId) => {
   const response = await axios.get(
     `${BASE_URL}/boards/${boardId}/roles`
   );
-  console.log(response.data)
+
   return response.data;
 }
 
 export const getRole = async(boardId, roleId) => {
   const response = await axios.get(
-    `${BASE_URL}/boards/${boardId}/${roleId}`
+    `${BASE_URL}/boards/${boardId}/roles/${roleId}`
   );
   return response.data;
 }
 export async function createRole(data, boardId) {
-  console.log(data);
+
 
   await axios.post(`${BASE_URL}/boards/${boardId}/roles`, data);
 }
 export async function updateRole(userId, boardId, updatedData) {
-  console.log("UPDATEDATA:" + updatedData);
+
   await axios.put(`${BASE_URL}/users/${userId}/roleOnBoard/${boardId}`, updatedData);
+}
+export const getTasks = async(userId, boardId, stateId) => {
+  const response = await axios.get(
+    `${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks`
+  );
+  return response.data;
 }
