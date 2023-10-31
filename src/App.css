@@ -199,7 +199,12 @@ h1 {
   margin-bottom: 16px;
   padding: 8px;
 }
-
+input[type="color"]{
+  padding: 0px;
+  border-radius: 0px;
+  background-color: none;
+  box-shadow: none;
+}
 .myModal button {
   background-color: var(--primary-color);
   color: var(--text-color);
@@ -230,7 +235,7 @@ select:focus {
   outline: none;
 }
 
-.alert-danger {
+.alert-error {
   color: #721c24;
   background-color: #f8d7da;
   border-color: #f5c6cb;

@@ -11,15 +11,15 @@ const Task = ({ userId, boardId, state, task, index }) => {
   });
 
   return (
-    <div className={`items-center rounded p-4 ${index > 0 ? "mt-4" : ""}`} key={task.id}>
+    <div className={`items-center rounded p-4 ${index > 0 ? "mt-4" : ""}`} key={task?.id}>
+      <div className={`flex ${`task?.priority?.color ? bg-[${task?.priority?.color}] : ""`} h-[5px]`}></div>
       <div className="flex justify-between ">
-        <p className=" text-base  font-bold">{task.title}</p>
-        <p>12.12.23</p>
+        <p className="text-base font-bold">{task?.title}</p>
+        <p>{task?.priority?.color}</p>
       </div>
       <div className="pt-2">
-        {task.users.map((user, index) => (
-          <div>
-
+        {task?.users.map((user, index) => (
+          <div key={index}>
             {user.name}
           </div>
         ))}

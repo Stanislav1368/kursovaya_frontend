@@ -28,12 +28,10 @@ const BoardsList = () => {
   const handleOpenNotif = () => {
     setOpenNotif(true);
     setTimeout(() => {
-      handleCloseNotif();
+      setOpenNotif(false);
     }, 2000);
   };
-  const handleCloseNotif = () => {
-    setOpenNotif(false);
-  };
+
   const { data: user, isLoading: isUserLoading } = useQuery("user", fetchUser);
 
   const { data: boards, isLoading: isBoardsLoading } = useQuery("boards", () => fetchBoards(user.id), { enabled: !!user });
@@ -64,18 +62,18 @@ const BoardsList = () => {
   };
   return (
     <div>
+      <MyModal open={openAddBoardModal} onClose={handleCloseAddBoardModal} header="Новая доска">
+        <form onSubmit={addBoard} className="flex flex-col items-start">
+          <input required type="text" name="title" placeholder="title" />
+          <button type="submit">Добавить доску</button>
+        </form>
+      </MyModal>
+      <Notification status="success" open={openNotif}>
+        Доска успешно создана
+      </Notification>
       <div className="navbar ">
         <div className="flex items-center  space-x-3 ">
           <h1 className="">Имя пользователя: {user.name}</h1>
-          <Notification status="success" open={openNotif}>
-            Доска успешно создана
-          </Notification>
-          <MyModal open={openAddBoardModal} onClose={handleCloseAddBoardModal} header="Новая доска">
-            <form onSubmit={addBoard} className="flex flex-col items-start">
-              <input required type="text" name="title" placeholder="title" />
-              <button type="submit">Добавить доску</button>
-            </form>
-          </MyModal>
         </div>
 
         <div className="flex items-center">

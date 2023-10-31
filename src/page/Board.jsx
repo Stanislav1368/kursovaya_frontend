@@ -8,6 +8,7 @@ import {
   DeleteState,
   DeleteTask,
   UpdateTask,
+  createPriority,
   createRole,
   fetchBoardById,
   fetchStates,
@@ -15,6 +16,7 @@ import {
   fetchUserId,
   fetchUsersByBoard,
   getCurrentRole,
+  getPriorities,
   getRoleByBoardId,
   getRoles,
   updateRole,
@@ -25,6 +27,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SettingsAccessibilityIcon from "@mui/icons-material/SettingsAccessibility";
 import AddIcon from "@mui/icons-material/Add";
+import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import Task from "./Task";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -38,6 +41,7 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import MyModal from "./MyModal";
 import { ArrowLeft, ArrowLeftOutlined, ArrowLeftSharp, ArrowRight } from "@mui/icons-material";
+import Notification from "./Notification";
 
 const Board = () => {
   const { theme, updateTheme } = useContext(ThemeContext);
@@ -48,6 +52,13 @@ const Board = () => {
   const [isRead, setIsRead] = useState(false);
   const [isCreate, setIsCreate] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
+  const [selectedColor, setSelectedColor] = useState("#000000");
+
+  const handleColorChange = (event) => {
+    const newColor = event.target.value;
+    setSelectedColor(newColor);
+  };
+
   const handleOpenTaskModal = (stateId) => {
     setOpenTaskModal(true);
     setSelectedStateId(stateId);
@@ -62,6 +73,15 @@ const Board = () => {
   const handleCloseAddUserModal = () => {
     setOpenAddUserModal(false);
   };
+
+  const [openPriorityModal, setOpenPriorityModal] = useState(false);
+  const handleOpenPriorityModal = () => {
+    setOpenPriorityModal(true);
+  };
+  const handleClosePriorityModal = () => {
+    setOpenPriorityModal(false);
+  };
+
   const [openAddSectionModal, setOpenAddSectionModal] = useState(false);
   const handleOpenAddSectionModal = () => {
     setOpenAddSectionModal(true);
@@ -83,6 +103,37 @@ const Board = () => {
   const handleCloseRolesModal = () => {
     setOpenRolesModal(false);
   };
+  const [openNotifSuccessState, setOpenNotifSuccessState] = useState(false);
+  const handleOpenNotifSuccessState = () => {
+    setOpenNotifSuccessState(true);
+    setTimeout(() => {
+      setOpenNotifSuccessState(false);
+    }, 2000);
+  };
+
+  const [openNotifSuccessTask, setOpenNotifSuccessTask] = useState(false);
+  const handleOpenNotifSuccessTask = () => {
+    setOpenNotifSuccessTask(true);
+    setTimeout(() => {
+      setOpenNotifSuccessTask(false);
+    }, 2000);
+  };
+
+  const [openNotifSuccessUser, setOpenNotifSuccessUser] = useState(false);
+  const handleOpenNotifSuccessUser = () => {
+    setOpenNotifSuccessUser(true);
+    setTimeout(() => {
+      setOpenNotifSuccessUser(false);
+    }, 2000);
+  };
+
+  const [openNotifErrorUser, setOpenNotifErrorUser] = useState(false);
+  const handleOpenNotifErrorUser = () => {
+    setOpenNotifErrorUser(true);
+    setTimeout(() => {
+      setOpenNotifErrorUser(false);
+    }, 2000);
+  };
 
   const { boardId } = useParams();
   const queryClient = useQueryClient();
@@ -101,6 +152,10 @@ const Board = () => {
     keepPreviousData: true,
   });
   const { data: roles, isLoading: isRolesLoading } = useQuery("roles", () => getRoles(boardId), {
+    refetchOnWindowFocus: false,
+    keepPreviousData: true,
+  });
+  const { data: priorities, isLoading: isPrioritiesLoading } = useQuery("priorities", () => getPriorities(boardId), {
     refetchOnWindowFocus: false,
     keepPreviousData: true,
   });
@@ -132,7 +187,9 @@ const Board = () => {
   //   { onSuccess: () => queryClient.invalidateQueries(["userBoard"]) }
   // );
   const CreateRoleMutation = useMutation((data) => createRole(data, boardId), { onSuccess: () => queryClient.invalidateQueries(["roles"]) });
-
+  const CreatePriorityMutation = useMutation((data) => createPriority(data, boardId), {
+    onSuccess: () => queryClient.invalidateQueries(["priorities"]),
+  });
   const handleCheckboxChange = async (e, userId, boardId) => {
     e.preventDefault();
     try {
@@ -160,12 +217,27 @@ const Board = () => {
     }
   };
 
+  const createPriorityForBoard = async (event) => {
+    event.preventDefault();
+    try {
+      const formData = new FormData(event.target);
+      const fields = Object.fromEntries(formData);
+      console.log(fields);
+      handleClosePriorityModal();
+
+      CreatePriorityMutation.mutate(fields);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const addState = async (event) => {
     event.preventDefault();
     try {
       const formData = new FormData(event.target);
       const fields = Object.fromEntries(formData);
       handleCloseAddSectionModal();
+      handleOpenNotifSuccessState();
       AddStateMutation.mutate(fields);
     } catch (error) {
       console.error(error);
@@ -187,10 +259,11 @@ const Board = () => {
           fields[name] = value;
         }
       }
-
+      console.log(fields);
       await AddTask(fields, userId, boardId, selectedStateId);
       console.log(fields);
       handleCloseTaskModal();
+      handleOpenNotifSuccessTask();
       await queryClient.invalidateQueries(["states"]);
     } catch (error) {
       console.error(error);
@@ -204,8 +277,10 @@ const Board = () => {
       await AddUserInBoard(userId, boardId);
       handleCloseAddUserModal();
       await queryClient.invalidateQueries(["usersBoard", boardId]);
+      handleOpenNotifSuccessUser();
     } catch (error) {
       console.error(error);
+      handleOpenNotifErrorUser();
     }
   };
   if (isUserLoading || isRoleLoading || isUserIdLoading || isStatesLoading || isBoardLoading || isUsersLoading || isCurrentRoleLoading) {
@@ -246,12 +321,24 @@ const Board = () => {
     <div>
       <MyModal open={openAddSectionModal} onClose={handleCloseAddSectionModal} header="Новая секция">
         <form onSubmit={addState} className="flex flex-col items-start">
-          <input className="" type="text" name="title" placeholder="title" />
+          <input required className="" type="text" name="title" placeholder="title" />
           <button type="submit" className="">
             Добавить секцию
           </button>
         </form>
       </MyModal>
+      <Notification status="success" open={openNotifSuccessState}>
+        таблица успешно создана
+      </Notification>
+      <Notification status="success" open={openNotifSuccessTask}>
+        Задача успешно добавлена
+      </Notification>
+      <Notification status="success" open={openNotifSuccessUser}>
+        Новый пользователь успешно добавлен
+      </Notification>
+      <Notification status="error" open={openNotifErrorUser}>
+        Ошибка! Пользователь не найден
+      </Notification>
       <div className="navbar h-[50px] ">
         <div className="flex items-center">
           <ArrowBackIcon
@@ -310,6 +397,9 @@ const Board = () => {
               </button>
               <button className="p-[10px]" onClick={handleOpenAddUserModal}>
                 <PersonAddIcon /> Добавить пользователя
+              </button>
+              <button className="p-[10px]" onClick={handleOpenPriorityModal}>
+                <PriorityHighIcon /> Приоритеты
               </button>
               <button className="p-[10px]">
                 <LeaderboardIcon /> Статистика
@@ -429,33 +519,30 @@ const Board = () => {
               </tr>
             </thead>
             <tbody>
-             {users.map((user, index) => (
-  <tr key={index}>
-    <td className="w-1/4">
-      {user.name}
-      {user.isOwner && <span className="font-bold underline">(Вы)</span>}
-      {user.isOwner && <span className="ml-2">Администратор</span>}
-    </td>
-    <td className="w-1/4">
-      <div className="py-2">
-        {user.isOwner ? (
-          <span className="block rounded-md p-[8px]">Администратор</span>
-        ) : (
-          <select
-            id="country"
-            className="block rounded-md p-[8px]"
-            value={user.roleId}
-            onChange={(e) => handleRoleChange(user.id, e.target.value)}
-          >
-            {roles.map((role, index) => (
-              <option key={index} value={role.id}>{role.name}</option>
-            ))}
-          </select>
-        )}
-      </div>
-    </td>
-  </tr>
-))}
+              {users.map((user, index) => (
+                <tr key={index}>
+                  <td className="w-1/4">
+                    {user.name}
+                    {user.isOwner && <span className="font-bold underline">(Вы)</span>}
+                    {user.isOwner && <span className="ml-2">Администратор</span>}
+                  </td>
+                  <td className="w-1/4">
+                    <div className="py-2">
+                      {user.isOwner ? (
+                        <span className="block rounded-md p-[8px]">Администратор</span>
+                      ) : (
+                        <select className="block rounded-md p-[8px]" value={user.roleId} onChange={(e) => handleRoleChange(user.id, e.target.value)}>
+                          {roles.map((role, index) => (
+                            <option key={index} value={role.id}>
+                              {role.name}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </MyModal>
@@ -467,13 +554,26 @@ const Board = () => {
             </button>
           </form>
         </MyModal>
+        <MyModal open={openPriorityModal} onClose={handleClosePriorityModal} header="Создать новый приоритет">
+          <form onSubmit={(event) => createPriorityForBoard(event, boardId)} className="">
+            <input required className="w-[50%]" type="text" name="name" placeholder="Наименование" />
+            <input type="number" id="tentacles" name="index" min="1" max="99" />
+            <div className="flex flex-row">
+              <input className="mb-[15px]" type="color" name="color" value={selectedColor} onChange={handleColorChange} />
+              <label>Цвет</label>
+            </div>
+            <button type="submit" className="w-[50%]">
+              Создать приоритет
+            </button>
+          </form>
+        </MyModal>
       </div>
       <div className="flex flex-row h-[calc(100vh-200px)] p-[15px]">
         {states
           .sort((a, b) => a.id - b.id)
           .map((state) => (
-            <div className="state flex flex-col w-[350px] mr-4 h-full " key={state.id}>
-              <div className="state-header flex justify-between items-center p-4">
+            <div className="state flex flex-col w-[350px] mr-4 overflow-y-auto " key={state.id}>
+              <div className="state-header flex justify-between items-center p-4 ">
                 <div className="items-center flex">
                   <ArrowLeft />
                   <span className="text-lg font-bold break-words">{state.title}</span>
@@ -488,13 +588,22 @@ const Board = () => {
                       <input required className="" type="text" name="title" placeholder="title" />
                       <input required className="" type="text" name="description" placeholder="description" />
 
-                      <div>
+                      <div className="flex flex-col">
                         {users.map((user, index) => (
-                          <label key={index} className="">
+                          <div key={index}>
                             <input type="checkbox" name="userIds" value={user.id} />
-                            {user.name}
-                          </label>
+                            <label className="ml-[5px]">{user.name}</label>
+                          </div>
                         ))}
+                      </div>
+                      <div className="pb-[15px]">
+                        <select name="priorityId" className="block rounded-md p-[8px]">
+                          {priorities.map((priority, index) => (
+                            <option key={index} value={priority.id}>
+                              {priority.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
 
                       <button type="submit" className="">
@@ -508,7 +617,7 @@ const Board = () => {
                 </div>
               </div>
               <div
-                className="column h-full"
+                className="column "
                 onDragLeave={(e) => dragLeaveHandler(e)}
                 onDragOver={(e) => handleDragOver(e)}
                 onDrop={(e) => handleDrop(e, state)}>
