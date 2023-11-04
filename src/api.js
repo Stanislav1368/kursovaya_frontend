@@ -12,7 +12,6 @@ export async function Registration(data) {
 }
 export const fetchUsersByBoard = async (boardId) => {
   const response = await axios.get(`${BASE_URL}/users/byBoardId/${boardId}`);
-
   return response.data;
 };
 export async function AddUserInBoard(userId, boardId) {

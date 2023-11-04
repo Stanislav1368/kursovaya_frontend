@@ -10,9 +10,9 @@ const UsersBoardList = ({ boardId }) => {
   }
 
   return (
-    <div>
+    <div className="flex">
       {users.map((user) => (
-        <div key={user.id}>{user.email}</div>
+        <div key={user.id} className="pr-1">{user.email}</div>
       ))}
     </div>
   );

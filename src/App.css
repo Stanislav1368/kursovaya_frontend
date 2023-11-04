@@ -112,17 +112,36 @@ button:hover {
   padding-right: 1rem /* 16px */;
   font-size: 1.25rem /* 20px */;
   line-height: 1.75rem /* 28px */;
-  box-shadow: var(--box-shadow-size) var(--border-color);
 }
 
 h1 {
   font-size: 48px;
   line-height: 1.1;
 }
+.list-boards {
+  box-shadow: var(--box-shadow-size) var(--border-color);
+  background-color: var(--primary-color);
+}
+.header-list-boards {
+  border-color: var(--border-color);
+  border-bottom-width: 1px;
+  background-color: var(--background-color);
+}
+li {
+  padding: 20px;
+  border-top: 1px solid var(--border-color);
+  scroll-snap-align: start;
+}
+
+li:first-child {
+  border: 0;
+}
 .board {
   background-color: var(--primary-color);
 }
-
+.avatar-card {
+  /* box-shadow: var(--box-shadow-size) var(--border-color); */
+}
 .task {
   background-color: var(--primary-color);
   box-shadow: var(--box-shadow-size) var(--border-color);
@@ -199,7 +218,7 @@ h1 {
   margin-bottom: 16px;
   padding: 8px;
 }
-input[type="color"]{
+input[type="color"] {
   padding: 0px;
   border-radius: 0px;
   background-color: none;

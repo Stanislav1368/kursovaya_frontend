@@ -555,6 +555,14 @@ const Board = () => {
           </form>
         </MyModal>
         <MyModal open={openPriorityModal} onClose={handleClosePriorityModal} header="Создать новый приоритет">
+          {priorities.map((priority, index) => (
+            <div
+              key={priority?.id}
+              style={{ borderColor: priority?.color, color: priority?.color, fontSize: "12px" }}
+              className="label h-[20px] w-min rounded-[999px] px-[8px] border-[1px] items-center mb-[5px]">
+              {priority?.name}
+            </div>
+          ))}
           <form onSubmit={(event) => createPriorityForBoard(event, boardId)} className="">
             <input required className="w-[50%]" type="text" name="name" placeholder="Наименование" />
             <input type="number" id="tentacles" name="index" min="1" max="99" />
@@ -601,6 +609,7 @@ const Board = () => {
                           {priorities.map((priority, index) => (
                             <option key={index} value={priority.id}>
                               {priority.name}
+                              <div style={{ backgroundColor: priority.color }}>1</div>
                             </option>
                           ))}
                         </select>
