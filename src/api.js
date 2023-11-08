@@ -42,7 +42,9 @@ export async function DeleteBoard(userId, boardId) {
 export async function UpdateTask(userId, boardId, stateId, taskId, updatedData) {
   await axios.put(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks/${taskId}`, { newStateId: updatedData });
 }
-
+export async function UpdateBoard(userId, boardId, updatedData) {
+  await axios.put(`${BASE_URL}/users/${userId}/boards/${boardId}`, updatedData);
+}
 export const fetchBoards = async (userId) => {
   const response = await axios.get(`${BASE_URL}/users/${userId}/boards`);
   return response.data;
@@ -55,7 +57,7 @@ export const fetchBoardById = async (userId, boardId) => {
 
 export const fetchStates = async (userId, boardId) => {
   const response = await axios.get(`${BASE_URL}/users/${userId}/boards/${boardId}/states`);
-  console.log(response.data)
+
   return response.data;
 };
 
@@ -122,6 +124,6 @@ export const getPriority = async (boardId, priorityId) => {
   return response.data;
 };
 export async function createPriority(data, boardId) {
-  console.log("test")
+
   await axios.post(`${BASE_URL}/boards/${boardId}/priorities`, data);
 }

@@ -8,6 +8,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import AddIcon from "@mui/icons-material/Add";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ThemeContext from "../ThemeContext";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
@@ -115,7 +116,8 @@ const BoardsList = () => {
                           <Link to={`/boards/${board.id}`} key={board.id} className="hover:text-blue-500 hover:underline h-[200px]">
                             {board.title}
                           </Link>
-                          <div className=" text-[12px] text-[#504f4f]">обновлено{moment.utc(board.updatedAt).format("MM/DD/YYYY")}</div>
+                          <MoreVertIcon></MoreVertIcon>
+                          <div className=" text-[12px] text-[#504f4f]">Создана {moment.utc(board.createdAt).format("MM/DD/YYYY")}</div>
                           <UsersBoardList boardId={board.id} />
                         </li>
                       ))}

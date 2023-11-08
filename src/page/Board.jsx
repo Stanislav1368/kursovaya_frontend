@@ -7,6 +7,7 @@ import {
   DeleteBoard,
   DeleteState,
   DeleteTask,
+  UpdateBoard,
   UpdateTask,
   createPriority,
   createRole,
@@ -24,6 +25,7 @@ import {
 } from "../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import EditIcon from "@mui/icons-material/Edit";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SettingsAccessibilityIcon from "@mui/icons-material/SettingsAccessibility";
 import AddIcon from "@mui/icons-material/Add";
@@ -54,6 +56,8 @@ const Board = () => {
   const [isDelete, setIsDelete] = useState(false);
   const [selectedColor, setSelectedColor] = useState("#000000");
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [newTitle, setNewTitle] = useState();
   const handleColorChange = (event) => {
     const newColor = event.target.value;
     setSelectedColor(newColor);
@@ -155,6 +159,11 @@ const Board = () => {
     refetchOnWindowFocus: false,
     keepPreviousData: true,
   });
+  const updateBoardMutation = useMutation((newTitle) => UpdateBoard(userId, boardId, { title: newTitle }), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("board");
+    },
+  });
   const { data: priorities, isLoading: isPrioritiesLoading } = useQuery("priorities", () => getPriorities(boardId), {
     refetchOnWindowFocus: false,
     keepPreviousData: true,
@@ -222,7 +231,7 @@ const Board = () => {
     try {
       const formData = new FormData(event.target);
       const fields = Object.fromEntries(formData);
-      console.log(fields);
+
       handleClosePriorityModal();
 
       CreatePriorityMutation.mutate(fields);
@@ -259,9 +268,9 @@ const Board = () => {
           fields[name] = value;
         }
       }
-      console.log(fields);
+
       await AddTask(fields, userId, boardId, selectedStateId);
-      console.log(fields);
+
       handleCloseTaskModal();
       handleOpenNotifSuccessTask();
       await queryClient.invalidateQueries(["states"]);
@@ -317,6 +326,24 @@ const Board = () => {
     await updateRole(userId, boardId, { roleId });
     queryClient.invalidateQueries(["usersBoard", boardId]); // Обновление кэша данных
   }
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+    setNewTitle(board.title);
+  };
+
+  const handleCancelClick = () => {
+    setIsEditing(false);
+  };
+
+  const handleSaveClick = () => {
+    updateBoardMutation.mutate(newTitle);
+    setIsEditing(false);
+  };
+
+  const handleTitleChange = (event) => {
+    setNewTitle(event.target.value);
+  };
   return (
     <div>
       <MyModal open={openAddSectionModal} onClose={handleCloseAddSectionModal} header="Новая секция">
@@ -375,10 +402,25 @@ const Board = () => {
 
       <div className="board-header  h-[150px] p-[15px]">
         <div className="flex items-center">
-          <h1 className=" text-5xl font-bold">
-            {board.title}#{board.id}
-          </h1>
-          <div className="avatar-overlay flex flex-row">
+          <>
+            {isEditing ? (
+              <div className="space-x-[15px] flex items-center">
+                <input className="text-3xl font-bold w-[250px] h-[35px]" type="text" value={newTitle} onChange={handleTitleChange} />
+                <button className="p-[5px] h-[35px]" onClick={() => handleSaveClick(newTitle)}>
+                  Save
+                </button>
+                <button className="p-[5px] h-[35px]" onClick={handleCancelClick}>
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <>
+                <h1 className="text-3xl font-bold">{board.title}</h1>
+                <EditIcon onClick={handleEditClick} />
+              </>
+            )}
+          </>
+          <div className="avatar-overlay ms-5 flex flex-row">
             {users
               .sort((a, b) => a.id - b.id)
               .map((user, index) => (
@@ -556,10 +598,16 @@ const Board = () => {
         </MyModal>
         <MyModal open={openPriorityModal} onClose={handleClosePriorityModal} header="Создать новый приоритет">
           {priorities.map((priority, index) => (
+            // <div
+            //   key={priority?.id}
+            //   style={{ borderColor: priority?.color, color: priority?.color, fontSize: "12px" }}
+            //   className="label h-[20px] w-min rounded-[999px] px-[8px] border-[1px] items-center mb-[5px]">
+            //   {priority?.name}
+            // </div>
             <div
               key={priority?.id}
-              style={{ borderColor: priority?.color, color: priority?.color, fontSize: "12px" }}
-              className="label h-[20px] w-min rounded-[999px] px-[8px] border-[1px] items-center mb-[5px]">
+              style={{ borderColor: priority?.color, backgroundColor: priority?.color, fontSize: "12px" }}
+              className="label h-[35px] w-min rounded-[5px] px-[8px] border-[1px] items-center mb-[5px] font-bold text-3xl text-black">
               {priority?.name}
             </div>
           ))}
@@ -631,7 +679,7 @@ const Board = () => {
                 onDragOver={(e) => handleDragOver(e)}
                 onDrop={(e) => handleDrop(e, state)}>
                 {state.tasks
-                  // .sort((a, b) => a.id - b.id)
+                  .sort((a, b) => a.id - b.id)
                   .map((task, index) => (
                     <div
                       className="task rounded m-4"
@@ -641,7 +689,6 @@ const Board = () => {
                       onDragLeave={(e) => dragLeaveHandler(e)}
                       onDragStart={(e) => handleDragStart(e, state.id, task.id)}
                       onDragEnd={(e) => handleDragEnd(e)}>
-                      {/* {console.log(task)}  */}
                       <Task userId={userId} boardId={boardId} state={state} task={task} index={index}></Task>
                     </div>
                   ))}

@@ -12,7 +12,7 @@ const MyModal = ({ open, onClose, children, header }) => {
     window.addEventListener("keydown", handleKeyDown);
   }
   return (
-    <div className={`myModal ${open ? "open" : ""}`}>
+    <div className={` myModal ${open ? "open" : ""}`}>
       <div className="myModal-content">
         <div className="pb-[20px] pt-[5px] pl-[15px] pr-[ 0px] flex justify-between">
           <div className="flex flex-row items-center justify-between w-full">
