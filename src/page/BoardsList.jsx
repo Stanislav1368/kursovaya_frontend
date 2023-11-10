@@ -94,7 +94,7 @@ const BoardsList = () => {
         <div className="container  justify-center flex avatar-card ">
           <div className="w-[20%] ">
             <img alt="" src="https://avatars.githubusercontent.com/u/39097846?v=4" width="260" height="260" className="rounded-[100%]" />
-            <span class=" text-2xl overflow-hidden" itemprop="name">
+            <span className=" text-2xl overflow-hidden" itemprop="name">
               {user.name}
             </span>
           </div>

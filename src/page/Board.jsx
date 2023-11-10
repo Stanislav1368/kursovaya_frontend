@@ -48,8 +48,8 @@ import Notification from "./Notification";
 const Board = () => {
   const { theme, updateTheme } = useContext(ThemeContext);
   const [openTaskModal, setOpenTaskModal] = useState(false);
-  const [currentStateId, setCurrentStateId] = useState();
-  const [currentTaskId, setCurrentTaskId] = useState();
+  const [currentStateId, setCurrentStateId] = useState(0);
+  const [currentTaskId, setCurrentTaskId] = useState(0);
   const [selectedStateId, setSelectedStateId] = useState();
   const [isRead, setIsRead] = useState(false);
   const [isCreate, setIsCreate] = useState(false);
@@ -188,7 +188,7 @@ const Board = () => {
   const DeleteStateMutation = useMutation((stateId) => DeleteState(userId, boardId, stateId), {
     onSuccess: () => queryClient.invalidateQueries(["states"]),
   });
-  const UpdateTaskMutation = useMutation((data) => UpdateTask(userId, boardId, currentStateId, currentTaskId, data), {
+  const UpdateTaskMutation = useMutation((data, newOrder) => UpdateTask(userId, boardId, currentStateId, currentTaskId, data, newOrder), {
     onSuccess: () => queryClient.invalidateQueries(["states"]),
   });
   // const UpdateUserPrivilegeMutation = useMutation(
@@ -304,8 +304,19 @@ const Board = () => {
     // e.target.style.border = "2px dashed";
   };
 
+  // const handleDropGreenZone = async (e, state, newOrder) => {
+  //   e.preventDefault();
+  //   e.target.style.border = "none";
+  //   console.log(newOrder);
+  //   UpdateTask(userId, boardId, currentStateId, currentTaskId, state.id, newOrder);
+  //   queryClient.invalidateQueries(["states"]);
+
+  // };
   const handleDrop = async (e, state) => {
     e.preventDefault();
+    if (state.id === currentStateId) {
+      return;
+    }
     e.target.style.border = "none";
     UpdateTaskMutation.mutate(state.id);
   };
@@ -337,6 +348,7 @@ const Board = () => {
   };
 
   const handleSaveClick = () => {
+    console.log(newTitle)
     updateBoardMutation.mutate(newTitle);
     setIsEditing(false);
   };
@@ -406,7 +418,7 @@ const Board = () => {
             {isEditing ? (
               <div className="space-x-[15px] flex items-center">
                 <input className="text-3xl font-bold w-[250px] h-[35px]" type="text" value={newTitle} onChange={handleTitleChange} />
-                <button className="p-[5px] h-[35px]" onClick={() => handleSaveClick(newTitle)}>
+                <button className="p-[5px] h-[35px]" onClick={() => handleSaveClick()}>
                   Save
                 </button>
                 <button className="p-[5px] h-[35px]" onClick={handleCancelClick}>
@@ -657,7 +669,7 @@ const Board = () => {
                           {priorities.map((priority, index) => (
                             <option key={index} value={priority.id}>
                               {priority.name}
-                              <div style={{ backgroundColor: priority.color }}>1</div>
+                              {/* <div style={{ backgroundColor: priority.color }}></div> */}
                             </option>
                           ))}
                         </select>
@@ -674,23 +686,29 @@ const Board = () => {
                 </div>
               </div>
               <div
-                className="column "
+                className="column  h-full "
                 onDragLeave={(e) => dragLeaveHandler(e)}
                 onDragOver={(e) => handleDragOver(e)}
                 onDrop={(e) => handleDrop(e, state)}>
                 {state.tasks
-                  .sort((a, b) => a.id - b.id)
+                  .sort((a, b) => a.order - b.order) // Сортировка задач по полю order
                   .map((task, index) => (
-                    <div
-                      className="task rounded m-4"
-                      key={task.id}
-                      draggable={true}
-                      onDragOver={(e) => e.stopPropagation()}
-                      onDragLeave={(e) => dragLeaveHandler(e)}
-                      onDragStart={(e) => handleDragStart(e, state.id, task.id)}
-                      onDragEnd={(e) => handleDragEnd(e)}>
-                      <Task userId={userId} boardId={boardId} state={state} task={task} index={index}></Task>
-                    </div>
+                    <>
+                      <div
+                        onDragLeave={(e) => dragLeaveHandler(e)}
+                        onDragOver={(e) => handleDragOver(e)}
+                        onDrop={(e) => handleDrop(e, state, task.order)}
+                        className="bg-green-500 w-full h-[3%]"></div>
+                      <div
+                        className="task rounded mx-4"
+                        draggable={true}
+                        onDragOver={(e) => e.stopPropagation()}
+                        onDragLeave={(e) => dragLeaveHandler(e)}
+                        onDragStart={(e) => handleDragStart(e, state.id, task.id)}
+                        onDragEnd={(e) => handleDragEnd(e)}>
+                        <Task userId={userId} boardId={boardId} state={state} task={task} index={index}></Task>
+                      </div>
+                    </>
                   ))}
               </div>
             </div>

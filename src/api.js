@@ -39,8 +39,9 @@ export async function DeleteBoard(userId, boardId) {
   await axios.delete(`${BASE_URL}/users/${userId}/boards/${boardId}`);
 }
 
-export async function UpdateTask(userId, boardId, stateId, taskId, updatedData) {
-  await axios.put(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks/${taskId}`, { newStateId: updatedData });
+export async function UpdateTask(userId, boardId, stateId, taskId, newState, newOrderNum) {
+  console.log(newState, newOrderNum)
+  await axios.put(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks/${taskId}`, { newStateId: newState, newOrder: newOrderNum});
 }
 export async function UpdateBoard(userId, boardId, updatedData) {
   await axios.put(`${BASE_URL}/users/${userId}/boards/${boardId}`, updatedData);
