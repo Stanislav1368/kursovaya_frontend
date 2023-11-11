@@ -23,6 +23,7 @@ import {
   updateRole,
   updateRoleByBoardId,
 } from "../api";
+
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import EditIcon from "@mui/icons-material/Edit";
@@ -319,6 +320,8 @@ const Board = () => {
     }
     e.target.style.border = "none";
     UpdateTaskMutation.mutate(state.id);
+    queryClient.invalidateQueries(["states"]);
+    console.log(state);
   };
   const handleDragEnd = (e) => {
     e.preventDefault();
@@ -348,7 +351,7 @@ const Board = () => {
   };
 
   const handleSaveClick = () => {
-    console.log(newTitle)
+    console.log(newTitle);
     updateBoardMutation.mutate(newTitle);
     setIsEditing(false);
   };
@@ -609,20 +612,23 @@ const Board = () => {
           </form>
         </MyModal>
         <MyModal open={openPriorityModal} onClose={handleClosePriorityModal} header="Создать новый приоритет">
-          {priorities.map((priority, index) => (
-            // <div
-            //   key={priority?.id}
-            //   style={{ borderColor: priority?.color, color: priority?.color, fontSize: "12px" }}
-            //   className="label h-[20px] w-min rounded-[999px] px-[8px] border-[1px] items-center mb-[5px]">
-            //   {priority?.name}
-            // </div>
-            <div
-              key={priority?.id}
-              style={{ borderColor: priority?.color, backgroundColor: priority?.color, fontSize: "12px" }}
-              className="label h-[35px] w-min rounded-[5px] px-[8px] border-[1px] items-center mb-[5px] font-bold text-3xl text-black">
-              {priority?.name}
-            </div>
-          ))}
+          <div className="space-x-[15px]">
+            {priorities.map((priority, index) => (
+              // <div
+              //   key={priority?.id}
+              //   style={{ borderColor: priority?.color, color: priority?.color, fontSize: "12px" }}
+              //   className="label h-[20px] w-min rounded-[999px] px-[8px] border-[1px] items-center mb-[5px]">
+              //   {priority?.name}
+              // </div>
+              <div
+                key={priority?.id}
+                style={{ borderColor: priority?.color, backgroundColor: priority?.color, fontSize: "12px" }}
+                className="  label h-[35px] rounded-[5px] px-[8px] border-[1px] items-center mb-[5px] font-bold text-3xl text-black inline-block">
+                {priority?.name}
+              </div>
+            ))}
+          </div>
+
           <form onSubmit={(event) => createPriorityForBoard(event, boardId)} className="">
             <input required className="w-[50%]" type="text" name="name" placeholder="Наименование" />
             <input type="number" id="tentacles" name="index" min="1" max="99" />
@@ -655,7 +661,10 @@ const Board = () => {
                     <form onSubmit={(event) => addTask(event, state.id)} className="flex flex-col items-start">
                       <input required className="" type="text" name="title" placeholder="title" />
                       <input required className="" type="text" name="description" placeholder="description" />
-
+                      <div>
+                        <label>Выберите дату и время:</label>
+                        <input type="datetime-local" name="deadline" />
+                      </div>
                       <div className="flex flex-col">
                         {users.map((user, index) => (
                           <div key={index}>
@@ -680,35 +689,28 @@ const Board = () => {
                       </button>
                     </form>
                   </MyModal>
-
                   <DeleteForeverIcon className="ml-2 cursor-pointer hover:text-red-500" onClick={() => DeleteStateMutation.mutate(state.id)} />
                   <ArrowRight />
                 </div>
               </div>
               <div
-                className="column  h-full "
+                className="column  h-full space-y-[15px]"
                 onDragLeave={(e) => dragLeaveHandler(e)}
                 onDragOver={(e) => handleDragOver(e)}
                 onDrop={(e) => handleDrop(e, state)}>
                 {state.tasks
                   .sort((a, b) => a.order - b.order) // Сортировка задач по полю order
                   .map((task, index) => (
-                    <>
-                      <div
-                        onDragLeave={(e) => dragLeaveHandler(e)}
-                        onDragOver={(e) => handleDragOver(e)}
-                        onDrop={(e) => handleDrop(e, state, task.order)}
-                        className="bg-green-500 w-full h-[3%]"></div>
-                      <div
-                        className="task rounded mx-4"
-                        draggable={true}
-                        onDragOver={(e) => e.stopPropagation()}
-                        onDragLeave={(e) => dragLeaveHandler(e)}
-                        onDragStart={(e) => handleDragStart(e, state.id, task.id)}
-                        onDragEnd={(e) => handleDragEnd(e)}>
-                        <Task userId={userId} boardId={boardId} state={state} task={task} index={index}></Task>
-                      </div>
-                    </>
+                    <div
+                    key={task.id}
+                      className="task rounded mx-4"
+                      draggable={true}
+                      onDragOver={(e) => e.stopPropagation()}
+                      onDragLeave={(e) => dragLeaveHandler(e)}
+                      onDragStart={(e) => handleDragStart(e, state.id, task.id)}
+                      onDragEnd={(e) => handleDragEnd(e)}>
+                      <Task userId={userId} boardId={boardId} state={state} task={task} index={index}></Task>
+                    </div>
                   ))}
               </div>
             </div>

@@ -40,9 +40,18 @@ export async function DeleteBoard(userId, boardId) {
 }
 
 export async function UpdateTask(userId, boardId, stateId, taskId, newState, newOrderNum) {
-  console.log(newState, newOrderNum)
+  await axios.put(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks/${taskId}`, { newStateId: newState});
+}
+export async function UpdateTaskIsCompleted(userId, boardId, stateId, taskId, updatedIsCompleted) {
+  console.log(updatedIsCompleted)
+  await axios.put(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks/${taskId}/isCompleted`, updatedIsCompleted);
+}
+
+export async function UpdateTaskTitle(userId, boardId, stateId, taskId, data) {
+  console.log(data)
   await axios.put(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks/${taskId}`, { newStateId: newState, newOrder: newOrderNum});
 }
+
 export async function UpdateBoard(userId, boardId, updatedData) {
   await axios.put(`${BASE_URL}/users/${userId}/boards/${boardId}`, updatedData);
 }
@@ -114,7 +123,11 @@ export const getTasks = async (userId, boardId, stateId) => {
   const response = await axios.get(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks`);
   return response.data;
 };
-
+export const getTask = async (userId, boardId, stateId, taskId) => {
+  console.log(userId, boardId, stateId, taskId)
+  const response = await axios.get(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks/${taskId}`);
+  return response.data;
+};
 export const getPriorities = async (boardId) => {
   const response = await axios.get(`${BASE_URL}/boards/${boardId}/priorities`);
 

@@ -54,7 +54,24 @@ const BoardsList = () => {
       console.error(error);
     }
   };
+  const handleEditClick = () => {
+    setIsEditing(true);
+    setNewTitle(board.title);
+  };
 
+  const handleCancelClick = () => {
+    setIsEditing(false);
+  };
+
+  const handleSaveClick = () => {
+    console.log(newTitle);
+    updateBoardMutation.mutate(newTitle);
+    setIsEditing(false);
+  };
+
+  const handleTitleChange = (event) => {
+    setNewTitle(event.target.value);
+  };
   if (isUserLoading || isBoardsLoading) {
     return <div></div>;
   }

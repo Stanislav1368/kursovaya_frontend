@@ -52,7 +52,13 @@
   flex-direction: column;
   height: calc(100vh);
 }
+.text-crossed {
+  text-decoration: line-through;
+}
 
+.text-normal {
+  text-decoration: none;
+}
 .contentboard {
   height: calc(100vh - 50px);
 }
@@ -153,7 +159,12 @@ li {
   border-top: 1px solid var(--border-color);
   scroll-snap-align: start;
 }
-
+.checkbox{
+  border-radius: none;
+  padding: none;
+  background-color: none;
+  box-shadow: none;
+}
 li:first-child {
   border: 0;
 }
