@@ -45,6 +45,8 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import MyModal from "./MyModal";
 import { ArrowLeft, ArrowLeftOutlined, ArrowLeftSharp, ArrowRight } from "@mui/icons-material";
 import Notification from "./Notification";
+import Navbar from "./Navbar";
+import Column from "./Column";
 
 const Board = () => {
   const { theme, updateTheme } = useContext(ThemeContext);
@@ -351,9 +353,11 @@ const Board = () => {
   };
 
   const handleSaveClick = () => {
-    console.log(newTitle);
-    updateBoardMutation.mutate(newTitle);
-    setIsEditing(false);
+    if (newTitle) {
+      console.log(newTitle);
+      updateBoardMutation.mutate(newTitle);
+      setIsEditing(false);
+    }
   };
 
   const handleTitleChange = (event) => {
@@ -381,7 +385,7 @@ const Board = () => {
       <Notification status="error" open={openNotifErrorUser}>
         Ошибка! Пользователь не найден
       </Notification>
-      <div className="navbar h-[50px] ">
+      {/* <div className="navbar h-[50px] ">
         <div className="flex items-center">
           <ArrowBackIcon
             className="cursor-pointer hover:border-b-[2px]"
@@ -413,9 +417,9 @@ const Board = () => {
               window.location.href = "/login";
             }}></LogoutIcon>
         </div>
-      </div>
-
-      <div className="board-header  h-[150px] p-[15px]">
+      </div> */}
+      <Navbar userId={userId} boardId={board.id}></Navbar>
+      <div className="board-header  h-[150px] p-[15px] space-y-5">
         <div className="flex items-center">
           <>
             {isEditing ? (
@@ -444,7 +448,7 @@ const Board = () => {
           </div>
         </div>
 
-        <div>{isOwner ? "Создатель" : currentRole.name}</div>
+        {/* <div>{isOwner ? "Создатель" : currentRole.name}</div> */}
 
         <div className="flex flex-row items-center space-x-[15px]">
           {isOwner || currentRole.isCreate ? (
@@ -642,7 +646,7 @@ const Board = () => {
           </form>
         </MyModal>
       </div>
-      <div className="flex flex-row h-[calc(100vh-200px)] p-[15px]">
+      <div className="main flex flex-row h-[calc(100vh-200px)] p-[15px]">
         {states
           .sort((a, b) => a.id - b.id)
           .map((state) => (
@@ -702,18 +706,19 @@ const Board = () => {
                   .sort((a, b) => a.order - b.order) // Сортировка задач по полю order
                   .map((task, index) => (
                     <div
-                    key={task.id}
+                      key={task.id}
                       className="task rounded mx-4"
                       draggable={true}
                       onDragOver={(e) => e.stopPropagation()}
                       onDragLeave={(e) => dragLeaveHandler(e)}
                       onDragStart={(e) => handleDragStart(e, state.id, task.id)}
                       onDragEnd={(e) => handleDragEnd(e)}>
-                      <Task userId={userId} boardId={boardId} state={state} task={task} index={index}></Task>
+                      <Task userId={userId} boardId={boardId} state={state} task={task} currentRole={currentRole}></Task>
                     </div>
                   ))}
               </div>
             </div>
+            // <Column userId={userId} users={users} priorities={priorities} boardId={boardId} state={state}></Column>
           ))}
       </div>
     </div>

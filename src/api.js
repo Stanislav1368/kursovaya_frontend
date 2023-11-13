@@ -40,6 +40,7 @@ export async function DeleteBoard(userId, boardId) {
 }
 
 export async function UpdateTask(userId, boardId, stateId, taskId, newState, newOrderNum) {
+  console.log(userId, boardId, stateId, taskId, newState)
   await axios.put(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks/${taskId}`, { newStateId: newState});
 }
 export async function UpdateTaskIsCompleted(userId, boardId, stateId, taskId, updatedIsCompleted) {
