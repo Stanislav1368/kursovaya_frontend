@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { Login } from "../api";
+import { login } from "../api";
+
 
 const LoginPage = () => {
   const [error, setError] = useState(false);
-  const mutation = useMutation((data) => Login(data));
+  const mutation = useMutation((data) => login(data));
   const navigate = useNavigate();
 
   const handleLogin = async (event) => {

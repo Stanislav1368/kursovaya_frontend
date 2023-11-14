@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "react-query";
-import { fetchUsersByBoard } from "../api"; // Импортируйте функцию, которая вызывает API для получения пользователей по идентификатору доски
+import { fetchUsersByBoard } from "../api";
 
 const UsersBoardList = ({ boardId }) => {
   const { data: users, isLoading } = useQuery(["usersBoard", boardId], () => fetchUsersByBoard(boardId));

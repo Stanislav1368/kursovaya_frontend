@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { AddTask, DeleteTask, UpdateTaskIsCompleted, getTask } from "../api";
-import MyModal from "./MyModal";
+import { addTask, deleteTask, updateTaskIsCompleted, getTask } from "../api";
+import MyModal from "../Components/MyModal";
 import DescriptionIcon from "@mui/icons-material/Description";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CommentIcon from "@mui/icons-material/Comment";
@@ -29,19 +29,18 @@ const Task = ({ userId, boardId, state, task, currentRole }) => {
   //   setIsOpen(!isOpen);
   // };
   const { data: taskData, isLoading: isTaskLoading } = useQuery(
-    ['task', userId, boardId, state.id, task.id],
+    ["task", userId, boardId, state.id, task.id],
     () => getTask(userId, boardId, state.id, task.id),
     { refetchOnWindowFocus: true }
   );
-  
 
   const handleTaskCompletion = () => {
     const updatedIsCompleted = !taskData.isCompleted;
-    UpdateTaskIsCompleted(userId, boardId, state.id, taskData.id, { isCompleted: updatedIsCompleted }).then(() => {
-      queryClient.setQueryData(['task', userId, boardId, state.id, taskData.id], oldData => {
+    updateTaskIsCompleted(userId, boardId, state.id, taskData.id, { isCompleted: updatedIsCompleted }).then(() => {
+      queryClient.setQueryData(["task", userId, boardId, state.id, taskData.id], (oldData) => {
         return {
           ...oldData,
-          isCompleted: updatedIsCompleted
+          isCompleted: updatedIsCompleted,
         };
       });
     });
@@ -94,10 +93,11 @@ const Task = ({ userId, boardId, state, task, currentRole }) => {
             className={`text-base font-bold hover:text-blue-500 hover:underline ${taskData.isCompleted ? "line-through" : ""}`}
             onClick={handleOpenTaskModal}
             style={{ display: "flex", alignItems: "center" }}>
-            {taskData.title} #{taskData.order} {taskData.isCompleted ? ("true") : ("false")}
+            {taskData.title} #{taskData.order}
           </p>
-          {taskData.users.some(user => user.id === userId) && (<input className="checkbox" type="checkbox" onChange={handleTaskCompletion} checked={taskData.isCompleted}></input>)}
-          
+          {taskData.users.some((user) => user.id === userId) && (
+            <input className="checkbox" type="checkbox" onChange={handleTaskCompletion} checked={taskData.isCompleted}></input>
+          )}
         </div>
       </div>
       <div className="flex justify-between items-center">

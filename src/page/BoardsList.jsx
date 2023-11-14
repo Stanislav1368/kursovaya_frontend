@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
-import { AddBoard, DeleteBoard, fetchBoards, fetchUser, fetchUserId } from "../api";
+import { AddBoard, deleteBoard, fetchBoards, fetchUser, fetchUserId } from "../api";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import UsersBoardList from "./UsersBoardList";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -12,8 +12,8 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ThemeContext from "../ThemeContext";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
-import MyModal from "./MyModal";
-import Notification from "./Notification";
+import MyModal from "../Components/MyModal";
+import Notification from "../Components/Notification";
 import moment from "moment/moment";
 const BoardsList = () => {
   const { theme, updateTheme } = useContext(ThemeContext);
@@ -110,7 +110,11 @@ const BoardsList = () => {
       <div className="  items-center justify-center flex mt-[15px]">
         <div className="container  justify-center flex avatar-card ">
           <div className="w-[20%] ">
-            <img alt="" src="https://avatars.githubusercontent.com/u/39097846?v=4" width="260" height="260" className="rounded-[100%]" />
+            <img
+              src="https://sun9-26.userapi.com/impg/3xLHrlF1PCbxrswiSugRewpAo6G4DQ6ah6_KOw/8kHfAXJhedE.jpg?size=481x645&quality=96&sign=2b1ffbedbe5606c49480bc18ab9529d8&type=album"
+              class="h-[260px] w-[260px] rounded-full object-cover"
+              alt="круглое изображение"
+            />
             <span className=" text-2xl overflow-hidden" itemprop="name">
               {user.name}
             </span>

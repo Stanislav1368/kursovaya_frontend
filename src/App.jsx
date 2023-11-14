@@ -7,7 +7,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import RegistrationPage from "./page/RegistrationPage";
 import { useEffect, useState } from "react";
-import TestBoard from "./page/TestBoard";
+
 
 
 const isAuthenticated = () => {

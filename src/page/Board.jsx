@@ -1,14 +1,14 @@
 import React, { useContext, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
-  AddState,
-  AddTask,
-  AddUserInBoard,
-  DeleteBoard,
-  DeleteState,
-  DeleteTask,
-  UpdateBoard,
-  UpdateTask,
+  addState,
+  addTask,
+  deleteBoard,
+  deleteState,
+  deleteTask,
+  updateBoard,
+  updateTask,
+  addUserInBoard,
   createPriority,
   createRole,
   fetchBoardById,
@@ -42,11 +42,11 @@ import ThemeContext from "../ThemeContext";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import MyModal from "./MyModal";
+import MyModal from "../Components/MyModal";
 import { ArrowLeft, ArrowLeftOutlined, ArrowLeftSharp, ArrowRight } from "@mui/icons-material";
-import Notification from "./Notification";
-import Navbar from "./Navbar";
-import Column from "./Column";
+import Notification from "../Components/Notification";
+import Navbar from "../Components/Navbar";
+import Column from "../Components/Column";
 
 const Board = () => {
   const { theme, updateTheme } = useContext(ThemeContext);
@@ -162,7 +162,7 @@ const Board = () => {
     refetchOnWindowFocus: false,
     keepPreviousData: true,
   });
-  const updateBoardMutation = useMutation((newTitle) => UpdateBoard(userId, boardId, { title: newTitle }), {
+  const updateBoardMutation = useMutation((newTitle) => updateBoard(userId, boardId, { title: newTitle }), {
     onSuccess: () => {
       queryClient.invalidateQueries("board");
     },
@@ -186,12 +186,12 @@ const Board = () => {
     refetchOnWindowFocus: false,
     keepPreviousData: true,
   });
-  const DeleteBoardMutation = useMutation((boardId) => DeleteBoard(userId, boardId));
-  const AddStateMutation = useMutation((data) => AddState(data, userId, boardId), { onSuccess: () => queryClient.invalidateQueries(["states"]) });
-  const DeleteStateMutation = useMutation((stateId) => DeleteState(userId, boardId, stateId), {
+  const DeleteBoardMutation = useMutation((boardId) => deleteBoard(userId, boardId));
+  const AddStateMutation = useMutation((data) => addState(data, userId, boardId), { onSuccess: () => queryClient.invalidateQueries(["states"]) });
+  const DeleteStateMutation = useMutation((stateId) => deleteState(userId, boardId, stateId), {
     onSuccess: () => queryClient.invalidateQueries(["states"]),
   });
-  const UpdateTaskMutation = useMutation((data, newOrder) => UpdateTask(userId, boardId, currentStateId, currentTaskId, data, newOrder), {
+  const UpdateTaskMutation = useMutation((data, newOrder) => updateTask(userId, boardId, currentStateId, currentTaskId, data, newOrder), {
     onSuccess: () => queryClient.invalidateQueries(["states"]),
   });
   // const UpdateUserPrivilegeMutation = useMutation(
@@ -243,7 +243,7 @@ const Board = () => {
     }
   };
 
-  const addState = async (event) => {
+  const handleAddState = async (event) => {
     event.preventDefault();
     try {
       const formData = new FormData(event.target);
@@ -256,7 +256,7 @@ const Board = () => {
     }
   };
 
-  const addTask = async (event) => {
+  const handleAddTask = async (event) => {
     event.preventDefault();
     try {
       const formData = new FormData(event.target);
@@ -272,7 +272,7 @@ const Board = () => {
         }
       }
 
-      await AddTask(fields, userId, boardId, selectedStateId);
+      await addTask(fields, userId, boardId, selectedStateId);
 
       handleCloseTaskModal();
       handleOpenNotifSuccessTask();
@@ -281,12 +281,12 @@ const Board = () => {
       console.error(error);
     }
   };
-  const addUserInBoard = async (event, boardId) => {
+  const handleAddUserInBoard = async (event, boardId) => {
     event.preventDefault();
     try {
       const formData = new FormData(event.target);
       const userId = formData.get("userId");
-      await AddUserInBoard(userId, boardId);
+      await addUserInBoard(userId, boardId);
       handleCloseAddUserModal();
       await queryClient.invalidateQueries(["usersBoard", boardId]);
       handleOpenNotifSuccessUser();
@@ -366,7 +366,7 @@ const Board = () => {
   return (
     <div>
       <MyModal open={openAddSectionModal} onClose={handleCloseAddSectionModal} header="Новая секция">
-        <form onSubmit={addState} className="flex flex-col items-start">
+        <form onSubmit={handleAddState} className="flex flex-col items-start">
           <input required className="" type="text" name="title" placeholder="title" />
           <button type="submit" className="">
             Добавить секцию
@@ -385,39 +385,6 @@ const Board = () => {
       <Notification status="error" open={openNotifErrorUser}>
         Ошибка! Пользователь не найден
       </Notification>
-      {/* <div className="navbar h-[50px] ">
-        <div className="flex items-center">
-          <ArrowBackIcon
-            className="cursor-pointer hover:border-b-[2px]"
-            onClick={() => {
-              window.location.href = "/boards";
-            }}></ArrowBackIcon>
-        </div>
-        <div className="flex items-center">
-          {theme === "light" ? (
-            <LightModeIcon className="toggleMode border-none mr-[15px] p-0" onClick={handleButtonClick}></LightModeIcon>
-          ) : (
-            <DarkModeIcon className="toggleMode border-none mr-[15px] p-0" onClick={handleButtonClick}></DarkModeIcon>
-          )}
-
-          {isOwner || currentRole.isDelete ? (
-            <DeleteForeverIcon
-              className=" mr-[15px] cursor-pointer hover:text-red-500 "
-              onClick={() => {
-                DeleteBoardMutation.mutate(board.id);
-                window.location.href = "/boards";
-              }}
-            />
-          ) : null}
-
-          <LogoutIcon
-            className="p-0 cursor-pointer"
-            onClick={() => {
-              localStorage.removeItem("token");
-              window.location.href = "/login";
-            }}></LogoutIcon>
-        </div>
-      </div> */}
       <Navbar userId={userId} boardId={board.id}></Navbar>
       <div className="board-header  h-[150px] p-[15px] space-y-5">
         <div className="flex items-center">
@@ -434,7 +401,7 @@ const Board = () => {
               </div>
             ) : (
               <>
-                <h1 className="text-3xl font-bold">{board.title}</h1>
+                <h1 className="text-4xl font-bold">{board.title}</h1>
                 <EditIcon onClick={handleEditClick} />
               </>
             )}
@@ -608,7 +575,7 @@ const Board = () => {
           </table>
         </MyModal>
         <MyModal open={openAddUserModal} onClose={handleCloseAddUserModal} header="Добавить пользователя к доске">
-          <form onSubmit={(event) => addUserInBoard(event, boardId)} className="">
+          <form onSubmit={(event) => handleAddUserInBoard(event, boardId)} className="">
             <input required className="w-[50%]" type="text" name="userId" placeholder="userId" />
             <button type="submit" className="w-[50%]">
               Добавить пользователя
@@ -654,7 +621,7 @@ const Board = () => {
               <div className="state-header flex justify-between items-center p-4 ">
                 <div className="items-center flex">
                   <ArrowLeft />
-                  <span className="text-lg font-bold break-words">{state.title}</span>
+                  <span className="text-2xl font-bold break-words">{state.title}</span>
                 </div>
 
                 <div className="flex">
@@ -662,7 +629,7 @@ const Board = () => {
                   <MoreVertIcon></MoreVertIcon>
                   <AddIcon className="cursor-pointer hover:text-green-300" onClick={() => handleOpenTaskModal(state.id)} />
                   <MyModal open={openTaskModal} onClose={handleCloseTaskModal} header="Новая задача">
-                    <form onSubmit={(event) => addTask(event, state.id)} className="flex flex-col items-start">
+                    <form onSubmit={(event) => handleAddTask(event, state.id)} className="flex flex-col items-start">
                       <input required className="" type="text" name="title" placeholder="title" />
                       <input required className="" type="text" name="description" placeholder="description" />
                       <div>

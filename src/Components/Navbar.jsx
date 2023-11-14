@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { DeleteBoard } from "../api";
+import { deleteBoard } from "../api";
 import { useMutation, useQuery } from "react-query";
 import ThemeContext from "../ThemeContext";
 import LightModeIcon from "@mui/icons-material/LightMode";
@@ -8,22 +8,22 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import LogoutIcon from "@mui/icons-material/Logout";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import EditIcon from "@mui/icons-material/Edit";
-const Navbar = ({boardId, userId}) => {
-    const { data: isOwner, isLoading: isRoleLoading } = useQuery("isOwner", () => getRoleByBoardId(userId, boardId), {
-        refetchOnWindowFocus: false,
-        keepPreviousData: true,
-      });
-      const { data: currentRole, isLoading: isCurrentRoleLoading } = useQuery("currentRole", () => getCurrentRole(userId, boardId), {
-        refetchOnWindowFocus: false,
-        keepPreviousData: true,
-      });
-    const DeleteBoardMutation = useMutation((boardId) => DeleteBoard(userId, boardId));
-    const handleButtonClick = () => {
-        // Изменяем значение темы
-        const newTheme = theme === "light" ? "dark" : "light";
-        updateTheme(newTheme);
-      };
-      const { theme, updateTheme } = useContext(ThemeContext);
+const Navbar = ({ boardId, userId }) => {
+  const { data: isOwner, isLoading: isRoleLoading } = useQuery("isOwner", () => getRoleByBoardId(userId, boardId), {
+    refetchOnWindowFocus: false,
+    keepPreviousData: true,
+  });
+  const { data: currentRole, isLoading: isCurrentRoleLoading } = useQuery("currentRole", () => getCurrentRole(userId, boardId), {
+    refetchOnWindowFocus: false,
+    keepPreviousData: true,
+  });
+  const DeleteBoardMutation = useMutation((boardId) => deleteBoard(userId, boardId));
+  const handleButtonClick = () => {
+    // Изменяем значение темы
+    const newTheme = theme === "light" ? "dark" : "light";
+    updateTheme(newTheme);
+  };
+  const { theme, updateTheme } = useContext(ThemeContext);
   return (
     <div className="navbar h-[50px] ">
       <div className="flex items-center">

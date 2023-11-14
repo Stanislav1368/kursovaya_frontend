@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
-import { Registration } from "../api";
+import { registration } from "../api";
+
 
 const RegistrationPage = () => {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ const RegistrationPage = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
 
-  const mutation = useMutation((data) => Registration(data), {
+  const mutation = useMutation((data) => registration(data), {
     onSuccess: () => navigate("/login"),
   });
   const handleLogin = async (event) => {
