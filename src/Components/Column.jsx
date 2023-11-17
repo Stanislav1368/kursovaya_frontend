@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Task from "../page/Task";
+import Task from "./Task";
 import MyModal from "./MyModal";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { ArrowLeft, ArrowLeftOutlined, ArrowLeftSharp, ArrowRight } from "@mui/icons-material";

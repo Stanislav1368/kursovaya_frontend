@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { addTask, deleteTask, updateTaskIsCompleted, getTask } from "../api";
-import MyModal from "../Components/MyModal";
+import { addTask, deleteTask, updateTaskIsCompleted, getTask, taskToArchive } from "../api";
+import MyModal from "./MyModal";
 import DescriptionIcon from "@mui/icons-material/Description";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CommentIcon from "@mui/icons-material/Comment";
 import moment from "moment";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { motion } from "framer-motion";
+import Dropdown from "./Dropdown";
 const Task = ({ userId, boardId, state, task, currentRole }) => {
   const queryClient = useQueryClient();
 
@@ -52,7 +53,6 @@ const Task = ({ userId, boardId, state, task, currentRole }) => {
   return (
     // ${index > 0 ? "mt-4" : ""}
     <div className={`items-center rounded p-4 `} key={task?.id}>
-      {console.log(taskData)}
       <MyModal open={openTaskModal} onClose={handleCloseTaskModal} header={`${taskData.title}`}>
         <div className="w-[850px] overflow-y-auto flex flex-row p-[15px] justify-between">
           <div className="">
@@ -89,12 +89,25 @@ const Task = ({ userId, boardId, state, task, currentRole }) => {
       </MyModal>
       <div className="flex justify-between ">
         <div className="flex justify-between w-full">
-          <p
-            className={`text-base font-bold hover:text-blue-500 hover:underline ${taskData.isCompleted ? "line-through" : ""}`}
-            onClick={handleOpenTaskModal}
-            style={{ display: "flex", alignItems: "center" }}>
-            {taskData.title} #{taskData.order}
-          </p>
+          <div className="flex">
+            <p
+              className={`text-base font-bold hover:text-blue-500 hover:underline ${taskData.isCompleted ? "line-through" : ""}`}
+              onClick={handleOpenTaskModal}
+              style={{ display: "flex", alignItems: "center" }}>
+              {taskData.title}
+            </p>
+            <Dropdown>
+              <div>
+                <button
+                  onClick={() => {
+                    taskToArchive(userId, boardId, state.id, task.id, true), 
+                    queryClient.invalidateQueries(["states"]);
+                  }}>
+                  В архив
+                </button>
+              </div>
+            </Dropdown>
+          </div>
           {taskData.users.some((user) => user.id === userId) && (
             <input className="checkbox" type="checkbox" onChange={handleTaskCompletion} checked={taskData.isCompleted}></input>
           )}

@@ -7,6 +7,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import RegistrationPage from "./page/RegistrationPage";
 import { useEffect, useState } from "react";
+import Archive from "./page/Archive";
 
 
 
@@ -71,7 +72,16 @@ function App() {
                 </RequireAuth>
               }
             ></Route>
-           
+           <Route
+              path="boards/:boardId/archive"
+              element={
+                <RequireAuth>
+                  <ThemeContext.Provider value={{ theme, updateTheme }}>
+                    <Archive />
+                  </ThemeContext.Provider>
+                </RequireAuth>
+              }
+            ></Route>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/registration" element={<RegistrationPage />} />
           </Route>

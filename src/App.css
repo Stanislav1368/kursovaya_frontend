@@ -52,6 +52,9 @@
   flex-direction: column;
   height: calc(100vh);
 }
+/* td {
+  color: var(--text-color);
+} */
 .text-crossed {
   text-decoration: line-through;
 }
@@ -120,7 +123,6 @@ button:hover {
   line-height: 1.75rem /* 28px */;
 }
 
-
 .dropdown {
   position: relative;
   display: inline-block;
@@ -131,7 +133,7 @@ button:hover {
   position: absolute;
   background-color: #f9f9f9;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   padding: 12px 16px;
   z-index: 1;
 }
@@ -139,8 +141,12 @@ button:hover {
 .dropdown:hover .dropdown-content {
   display: block;
 }
-
-
+.modal-container input {
+  border-radius: 8px;
+  padding: 5px;
+  background-color: var(--secondary-color);
+  box-shadow: var(--box-shadow-size) var(--border-color);
+}
 h1 {
   font-size: 48px;
   line-height: 1.1;
@@ -159,7 +165,7 @@ li {
   border-top: 1px solid var(--border-color);
   scroll-snap-align: start;
 }
-.checkbox{
+.checkbox {
   border-radius: none;
   padding: none;
   background-color: none;
@@ -187,22 +193,7 @@ li:first-child {
   box-shadow: var(--box-shadow-size) var(--border-color);
 }
 
-.myModal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.5);
-  overflow: hidden;
-}
 
-.myModal.open {
-  display: block;
-}
 .alert {
   padding: 12px 20px;
   border: 1px solid transparent;
@@ -222,54 +213,43 @@ li:first-child {
   opacity: 1;
 }
 
-.myModal-content {
-  background-color: var(--background-color);
-  margin: 20% auto;
-  padding: 0px;
-  box-shadow: var(--box-shadow-size) var(--border-color);
-  min-width: 400px;
-  max-width: max-content;
-  border-radius: 8px;
-}
-
-.myModal-content .close-button:hover {
-  text-decoration: none;
-  cursor: pointer;
-  color: brown;
-  border: none;
-  box-shadow: none;
-}
-
-.myModal form {
+.modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
-.myModal input {
-  margin-bottom: 16px;
-  padding: 8px;
+.modal-content {
+
+  background-color: var(--primary-color);
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  position: relative;
 }
+
+.close-button {
+  /* position: absolute;
+  top: 10px;
+  right: 10px; */
+  cursor: pointer;
+}
+
 input[type="color"] {
   padding: 0px;
   border-radius: 0px;
   background-color: none;
   box-shadow: none;
 }
-.myModal button {
-  background-color: var(--primary-color);
-  color: var(--text-color);
-  margin-bottom: 16px;
-  padding: 8px;
-  cursor: pointer;
-  border-radius: 8px;
-  border: 1px solid transparent;
-}
 
-.myModal button:hover {
-  color: var(--text-color);
-  border-color: var(--accent-color);
-}
 input:focus {
   outline: none;
 }
@@ -304,7 +284,6 @@ select:focus {
   border-color: #c3e6cb;
 }
 .dropbtn {
-
   font-size: 16px;
   border: none;
 }
@@ -319,7 +298,7 @@ select:focus {
   position: absolute;
   background-color: #f1f1f1;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
 }
 
@@ -330,8 +309,10 @@ select:focus {
   display: block;
 }
 
-.dropdown-content a:hover {background-color: #ddd;}
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
 
-.dropdown:hover .dropdown-content {display: block;}
-  
-
+.dropdown:hover .dropdown-content {
+  display: block;
+}

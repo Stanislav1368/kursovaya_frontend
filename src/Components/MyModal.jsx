@@ -1,30 +1,42 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const MyModal = ({ open, onClose, children, header }) => {
-  if (open) {
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    }
+  };
+
+  useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.keyCode === 27) {
-        // 27 соответствует клавише "Esc"
         onClose();
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-  }
+    if (open) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open, onClose]);
+
   return (
-    <div className={` myModal ${open ? "open" : ""}`}>
-      <div className="myModal-content">
-        <div className="pb-[20px] pt-[5px] pl-[15px] pr-[ 0px] flex justify-between">
-          <div className="flex flex-row items-center justify-between w-full">
-            <div className=" text-2xl uppercase">{header}</div>
-            <div className="close-button text-2xl bold  w-[50px] h-full flex justify-center items-center " onClick={onClose}>
-              &#10005;
-            </div>
+    open && (
+      <div className="modal-container" onClick={handleClose}>
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="flex items-center justify-between">
+            {header && <h2 className="text-2xl font-bold">{header}</h2>}
+            <span className="close-button text-2xl font-bold" onClick={handleClose}>
+              ✕
+            </span>
           </div>
+          <div className="pt-[20px]">{children}</div>
         </div>
-        <div className="pl-[15px]">{children}</div>
       </div>
-    </div>
+    )
   );
 };
 
