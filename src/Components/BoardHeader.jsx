@@ -337,11 +337,9 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
           </form>
         </MyModal>
         <MyModal open={openAddSectionModal} onClose={handleCloseAddSectionModal} header="Новая секция">
-          <form onSubmit={handleAddState} className="flex flex-col items-start">
-            <input required className="" type="text" name="title" placeholder="title" />
-            <button type="submit" className="">
-              Добавить секцию
-            </button>
+          <form onSubmit={handleAddState} className="flex flex-col items-start space-y-3">
+            <input required type="text" name="title" placeholder="title" />
+            <button type="submit">Добавить секцию</button>
           </form>
         </MyModal>
       </div>
@@ -365,7 +363,6 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
               </h1>
               <EditIcon onClick={handleEditClick} />
               <Dropdown>
-
                 {isOwner ? (
                   <p
                     className=" mr-[0] cursor-pointer hover:text-red-500 flex items-center"
@@ -377,7 +374,6 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
                     Удалить
                   </p>
                 ) : null}
-
               </Dropdown>
             </>
           )}
@@ -430,6 +426,7 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
             <ArchiveIcon /> Архив
           </button>
         ) : null}
+
       </div>
     </div>
   );

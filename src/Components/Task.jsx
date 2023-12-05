@@ -10,7 +10,7 @@ import moment from "moment";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { motion } from "framer-motion";
 import Dropdown from "./Dropdown";
-const Task = ({ userId, boardId, state, task, currentRole }) => {
+const Task = ({ userId, boardId, state, task, currentRole, queryClient_ }) => {
   const queryClient = useQueryClient();
 
   // const DeleteTaskMutation = useMutation(() => DeleteTask(userId, boardId, state.id, task.id), {
@@ -97,15 +97,13 @@ const Task = ({ userId, boardId, state, task, currentRole }) => {
               {taskData.title}
             </p>
             <Dropdown>
-              <div>
-                <button
-                  onClick={() => {
-                    taskToArchive(userId, boardId, state.id, task.id, true), 
-                    queryClient.invalidateQueries(["states"]);
-                  }}>
-                  В архив
-                </button>
-              </div>
+              <button
+                onClick={async() => {
+                  await taskToArchive(userId, boardId, state.id, task.id, true);
+                  await queryClient_.invalidateQueries(["tasks"]);
+                }}>
+                В архив
+              </button>
             </Dropdown>
           </div>
           {taskData.users.some((user) => user.id === userId) && (

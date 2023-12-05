@@ -4,19 +4,29 @@ import BoardsList from "./page/BoardsList";
 import ThemeContext from "./ThemeContext";
 import LoginPage from "./page/LoginPage";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-
 import RegistrationPage from "./page/RegistrationPage";
 import { useEffect, useState } from "react";
 import Archive from "./page/Archive";
+import { jwtDecode } from "jwt-decode";
+
 
 
 
 const isAuthenticated = () => {
   const token = localStorage.getItem("token");
-  return token;
+  if (token) {
+    const decodedToken = jwtDecode(token); // декодирование токена
+    return decodedToken.exp * 1000 > Date.now(); // проверка срока действия токена
+  }
+  return false;
 };
 const RequireAuth = ({ children }) => {
-  return isAuthenticated() ? children : <Navigate to="/login" />;
+  if (isAuthenticated()) {
+    return children;
+  } else {
+    // Проверка на устаревший токен и перенаправление на страницу входа
+    return <Navigate to="/login" replace />;
+  }
 };
 
 function App() {

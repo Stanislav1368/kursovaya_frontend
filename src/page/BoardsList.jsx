@@ -123,7 +123,7 @@ const BoardsList = () => {
                           {board.title}
                         </Link>
                         
-                        <div className="text-[12px] text-[#504f4f]">Создана {moment.utc(board.createdAt).format("MM/DD/YYYY")}</div>
+                        <div className="text-[12px] text-[#504f4f]">Создана {moment.utc(board.createdAt).format("DD.MM.YYYY")}</div>
                         <UsersBoardList boardId={board.id} />
                       </li>
                     ))}

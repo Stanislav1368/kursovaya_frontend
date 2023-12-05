@@ -1,6 +1,6 @@
 import axios from "axios";
-const BASE_URL = "http://185.225.34.185:5000"; // Базовый URL API
-
+//const BASE_URL = "http://185.225.34.185:5000"; // Базовый URL API
+const BASE_URL = "http://localhost:5000"; // Базовый URL API
 export async function login(data) {
   const response = await axios.post(`${BASE_URL}/auth/login`, data);
 
@@ -36,11 +36,10 @@ export async function deleteState(userId, boardId, stateId) {
 }
 
 export async function deleteBoard(userId, boardId) {
-  console.log(userId, boardId)
+  console.log(userId, boardId);
   await axios.delete(`${BASE_URL}/users/${userId}/boards/${boardId}`);
 }
 export async function taskToArchive(userId, boardId, stateId, taskId, isArchived) {
-
   await axios.put(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks/${taskId}/archive`, { isArchived: isArchived });
 }
 export async function updateTask(userId, boardId, stateId, taskId, newState) {
@@ -74,7 +73,8 @@ export const fetchStates = async (userId, boardId) => {
   const response = await axios.get(`${BASE_URL}/users/${userId}/boards/${boardId}/states`);
   return response.data;
 };
-export const getIsArchivedTasks = async (userId,boardId) => {
+export const getIsArchivedTasks = async (userId, boardId) => {
+  console.log(userId);
   const response = await axios.get(`${BASE_URL}/users/${userId}/boards/${boardId}/tasks`);
   return response.data;
 };
@@ -84,7 +84,7 @@ export async function fetchUserId() {
   const response = await axios.get(`${BASE_URL}/users/currentUser`, {
     headers,
   });
-
+  console.log(response.data.id);
   return response.data.id;
 }
 
@@ -128,12 +128,16 @@ export async function updateRole(userId, boardId, updatedData) {
   await axios.put(`${BASE_URL}/users/${userId}/roleOnBoard/${boardId}`, updatedData);
 }
 export const getTasks = async (userId, boardId, stateId) => {
+  console.log(userId, boardId, stateId);
   const response = await axios.get(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks`);
+  console.log(response.data)
   return response.data;
+  
 };
 export const getTask = async (userId, boardId, stateId, taskId) => {
   console.log(userId, boardId, stateId, taskId);
   const response = await axios.get(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks/${taskId}`);
+
   return response.data;
 };
 export const getPriorities = async (boardId) => {

@@ -43,8 +43,7 @@ const RegistrationPage = () => {
       <div className="form-login flex flex-col justify-between items-center  h-[400px] w-[400px] ">
         <form
           onSubmit={handleRegistration}
-          className=" px-10 flex flex-col justify-between items-center  h-full w-full "
-        >
+          className=" px-10 flex flex-col justify-between items-center  h-full w-full">
           <h1 className="mt-5">РЕГИСТРАЦИЯ</h1>
           <div className="">
             <input
@@ -71,8 +70,7 @@ const RegistrationPage = () => {
               Логин
             </a>
           </div>
-        </form>
-        
+        </form>        
       </div>
     </div>
   );

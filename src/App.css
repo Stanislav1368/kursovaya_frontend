@@ -3,7 +3,7 @@
   --secondary-color-dark: #222222;
   --background-color-dark: #131312;
   --text-color-dark: rgba(255, 255, 255, 0.87);
-  --accent-color-dark: #646cff;
+  --accent-color-dark: #58282c;
   --border-color-dark: #707070;
   --box-shadow-size-dark: 0 0 0 1px;
 
@@ -11,7 +11,7 @@
   --secondary-color-light: #ffffff;
   --background-color-light: #edeef0;
   --text-color-light: #213547;
-  --accent-color-light: #646cff;
+  --accent-color-light: #007bff;
   --border-color-light: #dce1e6;
   --box-shadow-size-light: 0 0 0 1px;
 }
@@ -41,9 +41,6 @@
 .panel :not(:first-child) {
   margin-left: 15px;
 }
-/* .panel button {
-  padding: 10px;
-} */
 
 .App {
   background-color: var(--background-color);
@@ -52,20 +49,19 @@
   flex-direction: column;
   height: calc(100vh);
 }
-/* td {
-  color: var(--text-color);
-} */
-.text-crossed {
-  text-decoration: line-through;
-}
 
-.text-normal {
-  text-decoration: none;
-}
-.contentboard {
-  height: calc(100vh - 50px);
-}
 
+
+
+
+
+
+
+.form-login {
+  box-shadow: var(--box-shadow-size) var(--border-color);
+  border-radius: 12px;
+  background-color: var(--primary-color);
+}
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -76,31 +72,26 @@ input:-webkit-autofill:active {
   box-shadow: inset var(--box-shadow-size) var(--border-color);
   background-color: var(--primary-color);
 }
-
-input {
+ input {
   border-radius: 8px;
   padding: 5px;
   background-color: var(--secondary-color);
   box-shadow: var(--box-shadow-size) var(--border-color);
-}
-.form-login {
-  box-shadow: var(--box-shadow-size) var(--border-color);
-  border-radius: 12px;
-  background-color: var(--primary-color);
-}
+} 
 button {
   border-radius: 8px;
   border: 1px solid transparent;
   font-family: inherit;
-  background-color: #646cff;
+  border-color: var(--accent-color);
   cursor: pointer;
   transition: border-color 0.25s;
-  box-shadow: var(--box-shadow-size) var(--border-color);
 }
 button:hover {
+  background-color: var(--secondary-color);
   color: var(--text-color);
-  border-color: var(--accent-color);
-}
+  border-color: none;
+  box-shadow: var(--box-shadow-size) var(--accent-color);
+} 
 .toggleMode:hover {
   color: var(--text-color);
 }
@@ -108,7 +99,10 @@ button:hover {
 .board-header {
   border-bottom: solid 1px var(--border-color);
 }
+* {
+  transition: background-color 0.25s;
 
+}
 .navbar {
   background-color: var(--primary-color);
   height: 50px;
@@ -126,19 +120,21 @@ button:hover {
 .dropdown {
   position: relative;
   display: inline-block;
+
 }
 
 .dropdown-content {
+  background-color: var(--background-color);
   display: none;
   position: absolute;
-  background-color: #f9f9f9;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   padding: 12px 16px;
   z-index: 1;
 }
 
-.dropdown:hover .dropdown-content {
+.dropdown:hover.dropdown-content {
+  background-color: var(--background-color);
   display: block;
 }
 .modal-container input {
@@ -146,6 +142,15 @@ button:hover {
   padding: 5px;
   background-color: var(--secondary-color);
   box-shadow: var(--box-shadow-size) var(--border-color);
+}
+.modal-container button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-family: inherit;
+  border-color: var(--accent-color);
+  cursor: pointer;
+  transition: border-color 0.25s;
+  padding: 6px;
 }
 h1 {
   font-size: 48px;
@@ -177,9 +182,7 @@ li:first-child {
 .board {
   background-color: var(--primary-color);
 }
-.avatar-card {
-  /* box-shadow: var(--box-shadow-size) var(--border-color); */
-}
+
 .task {
   background-color: var(--primary-color);
   box-shadow: var(--box-shadow-size) var(--border-color);
@@ -237,9 +240,6 @@ li:first-child {
 }
 
 .close-button {
-  /* position: absolute;
-  top: 10px;
-  right: 10px; */
   cursor: pointer;
 }
 
