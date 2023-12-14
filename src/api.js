@@ -122,6 +122,7 @@ export const getRole = async (boardId, roleId) => {
   return response.data;
 };
 export async function createRole(data, boardId) {
+  console.log(data)
   await axios.post(`${BASE_URL}/boards/${boardId}/roles`, data);
 }
 export async function updateRole(userId, boardId, updatedData) {

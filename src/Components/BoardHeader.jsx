@@ -21,14 +21,21 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
     keepPreviousData: true,
   });
   const privileges = [
-    "редактироватьИнформациюДоски",
-    "добавлятьСтолбцы",
-    "добавлятьПользователей",
-    "добавлятьПриоритеты",
-    "создаватьРоли(не имеет смысла)",
-    "доступКСтатистике",
-    "создаватьОтчеты",
-    "доступКАрхиву",
+    "canEditBoardInfo",
+
+    "canAddColumns",
+    
+    "canAddUsers",
+    
+    "canAddPriorities",
+    
+    "canCreateRoles",
+    
+    "canAccessStatistics",
+    
+    "canCreateReports",
+    
+    "canAccessArchive"
   ];
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState();
@@ -172,11 +179,12 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
     await updateRole(userId, board.id, { roleId });
     queryClient.invalidateQueries(["usersBoard", board.id]);
   }
-  const CreateRoleMutation = useMutation((data) => createRole(data, board.id), { onSuccess: () => queryClient.invalidateQueries(["roles"]) });
+  
   const CreatePriorityMutation = useMutation((data) => createPriority(data, board.id), {
     onSuccess: () => queryClient.invalidateQueries(["priorities"]),
   });
   const AddStateMutation = useMutation((data) => addState(data, userId, board.id), { onSuccess: () => queryClient.invalidateQueries(["states"]) });
+  const CreateRoleMutation = useMutation((data) => createRole(data, board.id), { onSuccess: () => queryClient.invalidateQueries(["roles"]) });
   const createRoleForBoard = async (event) => {
     event.preventDefault();
     try {
@@ -193,6 +201,7 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
       fields.canAccessArchive = Boolean(fields.canAccessArchive);
 
       handleCloseRolesModal();
+      console.log(fields)
       CreateRoleMutation.mutate(fields);
     } catch (error) {
       console.error(error);
@@ -333,7 +342,7 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
 
       <div className="flex items-center">
         <>
-          {isEditing ? (
+          {currentRole.canEditBoardInfo ? (
             <div className="space-x-[15px] flex items-center">
               <input className="text-3xl font-bold w-[250px] h-[35px]" type="text" value={newTitle} onChange={handleTitleChange} />
               <button className="p-[5px] h-[35px]" onClick={() => handleSaveClick()}>
@@ -348,7 +357,7 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
               <h1 className="text-4xl font-bold">
                 {board.title}#{board.id}
               </h1>
-              <EditIcon onClick={handleEditClick} />
+              {currentRole.canEditBoardInfo && <EditIcon onClick={handleEditClick} />}
               <Dropdown>
                 {isOwner ? (
                   <p
@@ -405,7 +414,7 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
           </button>
         ) : null}
         {isOwner || currentRole.canAccessStatistics ? (
-          <button 
+          <button
             className="p-[6px]"
             onClick={() => {
               window.location.href = `/boards/${board.id}/archive`;
@@ -413,7 +422,6 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
             <ArchiveIcon /> Архив
           </button>
         ) : null}
-       
       </div>
     </div>
   );
