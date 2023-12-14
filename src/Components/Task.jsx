@@ -1,14 +1,10 @@
-import React, { useEffect, useState } from "react";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { addTask, deleteTask, updateTaskIsCompleted, getTask, taskToArchive } from "../api";
+import React, { useState } from "react";
+import { useQuery, useQueryClient } from "react-query";
+import { updateTaskIsCompleted, getTask, taskChangeArchivingStatus } from "../api";
 import MyModal from "./MyModal";
 import DescriptionIcon from "@mui/icons-material/Description";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import CommentIcon from "@mui/icons-material/Comment";
 import moment from "moment";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { motion } from "framer-motion";
 import Dropdown from "./Dropdown";
 const Task = ({ userId, boardId, state, task, currentRole, queryClient_ }) => {
   const queryClient = useQueryClient();
@@ -61,8 +57,8 @@ const Task = ({ userId, boardId, state, task, currentRole, queryClient_ }) => {
                 <AccessTimeIcon />
                 Срок
               </div>
-              <p className="ms-[25px] italic">Создана: {moment.utc(task.createdAt).utcOffset(5).format("MM/DD/YYYY HH:mm")}</p>
-              <p className="ms-[25px] italic">Дедлайн:{moment(task.deadline).utcOffset(5).format("MM/DD/YYYY HH:mm")}</p>
+              <p className="ms-[25px] italic">Создана: {moment.utc(task.createdAt).utcOffset(5).format("DD/MM/YYYY HH:mm")}</p>
+              <p className="ms-[25px] italic">Дедлайн:{moment.utc(task.deadline).format("DD.MM.YYYY")}</p>
             </div>
             <div>
               <div className="text-xl">
@@ -71,20 +67,20 @@ const Task = ({ userId, boardId, state, task, currentRole, queryClient_ }) => {
               </div>
               <p className="px-[10px] ms-4 italic">{task.description}</p>
             </div>
-            <div className="">
+            {/* <div className="">
               <div className="text-xl">
                 <CommentIcon />
                 Комментарии
               </div>
-            </div>
+            </div> */}
           </div>
-          <div className="flex flex-col space-y-[15px]">
+          {/* <div className="flex flex-col space-y-[15px]">
             <label>Добавить на карточку (В процессе)</label>
             <button className="text-left ">Участники</button>
             <button className="text-left ">Метка</button>
             <button className="text-left ">Срок</button>
             <button className="text-left">Вложения</button>
-          </div>
+          </div> */}
         </div>
       </MyModal>
       <div className="flex justify-between ">
@@ -97,13 +93,14 @@ const Task = ({ userId, boardId, state, task, currentRole, queryClient_ }) => {
               {taskData.title}
             </p>
             <Dropdown>
-              <button
-                onClick={async() => {
-                  await taskToArchive(userId, boardId, state.id, task.id, true);
+              <button className="p-1"
+                onClick={async () => {
+                  await taskChangeArchivingStatus(userId, boardId, state.id, task.id, true);
                   await queryClient_.invalidateQueries(["tasks"]);
                 }}>
                 В архив
               </button>
+              <button className="p-1">Удалить</button>
             </Dropdown>
           </div>
           {taskData.users.some((user) => user.id === userId) && (

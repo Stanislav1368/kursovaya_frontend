@@ -50,13 +50,6 @@
   height: calc(100vh);
 }
 
-
-
-
-
-
-
-
 .form-login {
   box-shadow: var(--box-shadow-size) var(--border-color);
   border-radius: 12px;
@@ -72,12 +65,12 @@ input:-webkit-autofill:active {
   box-shadow: inset var(--box-shadow-size) var(--border-color);
   background-color: var(--primary-color);
 }
- input {
+input {
   border-radius: 8px;
   padding: 5px;
   background-color: var(--secondary-color);
   box-shadow: var(--box-shadow-size) var(--border-color);
-} 
+}
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -85,15 +78,21 @@ button {
   border-color: var(--accent-color);
   cursor: pointer;
   transition: border-color 0.25s;
+  --tw-bg-opacity: 1;
+  background-color: rgb(239 68 68 / var(--tw-bg-opacity));
 }
 button:hover {
   background-color: var(--secondary-color);
   color: var(--text-color);
   border-color: none;
   box-shadow: var(--box-shadow-size) var(--accent-color);
-} 
+}
 .toggleMode:hover {
   color: var(--text-color);
+}
+
+.archivedTask {
+  background-color: var(--secondary-color);
 }
 
 .board-header {
@@ -101,7 +100,6 @@ button:hover {
 }
 * {
   transition: background-color 0.25s;
-
 }
 .navbar {
   background-color: var(--primary-color);
@@ -120,7 +118,6 @@ button:hover {
 .dropdown {
   position: relative;
   display: inline-block;
-
 }
 
 .dropdown-content {
@@ -196,7 +193,6 @@ li:first-child {
   box-shadow: var(--box-shadow-size) var(--border-color);
 }
 
-
 .alert {
   padding: 12px 20px;
   border: 1px solid transparent;
@@ -220,7 +216,7 @@ li:first-child {
   position: fixed;
   top: 0;
   left: 0;
-  
+
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
@@ -231,7 +227,6 @@ li:first-child {
 }
 
 .modal-content {
-
   background-color: var(--primary-color);
   padding: 20px;
   border-radius: 5px;
@@ -291,11 +286,13 @@ select:focus {
 .dropdown {
   position: relative;
   display: inline-block;
+  
 }
 
 .dropdown-content {
   display: none;
   position: absolute;
+
   background-color: #f1f1f1;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);

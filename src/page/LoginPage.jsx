@@ -51,7 +51,7 @@ const LoginPage = () => {
           </div>
           <div className="flex flex-col w-full items-center mb-5">
             <button className="p-3 mt-3 w-full" type="submit">
-              Логин
+              Войти
             </button>
             {error ? (
               <span className="text-red-600">Неверная почта или пароль</span>

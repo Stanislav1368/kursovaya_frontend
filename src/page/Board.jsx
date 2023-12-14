@@ -1,10 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  addTask,
-  deleteState,
-  updateTask,
-} from "../api";
+import { addTask, deleteState, updateTask } from "../api";
 import { useMutation, useQueryClient } from "react-query";
 import Navbar from "../Components/Navbar";
 import BoardHeader from "../Components/BoardHeader";
@@ -22,8 +18,11 @@ const Board = () => {
   const DeleteStateMutation = useMutation((stateId) => deleteState(userId, boardId, stateId), {
     onSuccess: () => queryClient.invalidateQueries(["states"]),
   });
-  const UpdateTaskMutation = useMutation((data, newOrder) => updateTask(userId, boardId, currentStateId, currentTaskId, data, newOrder), {
-    onSuccess: () => queryClient.invalidateQueries(["states"]),
+  const UpdateTaskMutation = useMutation((updatedData) => updateTask(userId, boardId, currentStateId, currentTaskId, updatedData), {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["tasks"]);
+      queryClient.invalidateQueries(["states"]);
+    },
   });
   if (isLoading) {
     return <div></div>;

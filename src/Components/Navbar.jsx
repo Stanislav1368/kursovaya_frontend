@@ -24,12 +24,12 @@ const Navbar = ({ boardId, userId }) => {
 
   return (
     <div className="navbar h-[50px]">
-      {boardId && (
+      {boardId ? (
+        <>
         <div className="flex items-center">
           <ArrowBackIcon className="cursor-pointer hover:border-b-[2px]" onClick={handleBackClick} />
         </div>
-      )}
-      <div className="flex items-center">
+        <div className="flex items-center">
         {theme === "light" ? (
           <LightModeIcon className="toggleMode border-none mr-[15px] p-0" onClick={handleButtonClick} />
         ) : (
@@ -37,6 +37,18 @@ const Navbar = ({ boardId, userId }) => {
         )}
         <LogoutIcon className="p-0 cursor-pointer" onClick={handleLogoutClick} />
       </div>
+      </>
+      ) : (
+        <div className="w-full flex p-0 m-0 justify-end">
+        {theme === "light" ? (
+          <LightModeIcon className="toggleMode border-none mr-[15px] p-0" onClick={handleButtonClick} />
+        ) : (
+          <DarkModeIcon className="toggleMode border-none mr-[15px] p-0" onClick={handleButtonClick} />
+        )}
+        <LogoutIcon className="p-0 cursor-pointer" onClick={handleLogoutClick} />
+        </div>
+      )}
+      
     </div>
   );
 };

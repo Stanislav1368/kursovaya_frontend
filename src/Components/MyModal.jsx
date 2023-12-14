@@ -27,7 +27,7 @@ const MyModal = ({ open, onClose, children, header }) => {
     open && (
       <div className="modal-container" onClick={handleClose}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between space-x-2">
             {header && <h2 className="text-2xl font-bold">{header}</h2>}
             <span className="close-button text-2xl font-bold" onClick={handleClose}>
               ✕

@@ -24,10 +24,13 @@ const Column = ({
   currentRole,
   dragLeaveHandler,
 }) => {
-const { data: tasks, isLoading: isTasksLoading, refetch } = useQuery(
-  ["tasks", userId, boardId, state.id],
-  () => getTasks(userId, boardId, state.id).then((data) => data.filter((task) => !task.isArchived))
-);
+  const {
+    data: tasks,
+    isLoading: isTasksLoading,
+    refetch,
+  } = useQuery(["tasks", userId, boardId, state.id], () =>
+    getTasks(userId, boardId, state.id).then((data) => data.filter((task) => !task.isArchived))
+  );
   const queryClient = useQueryClient();
   const [selectedStateId, setSelectedStateId] = useState();
   const [openTaskModal, setOpenTaskModal] = useState(false);
@@ -47,25 +50,30 @@ const { data: tasks, isLoading: isTasksLoading, refetch } = useQuery(
   };
   const handleAddTask = async (event) => {
     event.preventDefault();
-    const checkedCheckboxes = Array.from(event.target.querySelectorAll('input[type="checkbox"]:checked'));
-    if (checkedCheckboxes.length === 0) {
-      alert("Выберите хотя бы один элемент"); // Это пример, вы можете использовать свое собственное поведение
+    const formData = new FormData(event.target);
+
+    if (!validateForm(formData)) {
+      alert("Пожалуйста, заполните все обязательные поля");
       return; // Прерываем отправку формы
     }
     try {
       const formData = new FormData(event.target);
       const fields = {};
       for (const [name, value] of formData.entries()) {
-        if (fields[name]) {
-          if (!Array.isArray(fields[name])) {
-            fields[name] = [fields[name]];
+        if (name === "userIds") {
+          if (!fields[name]) {
+            fields[name] = [value]; // Преобразуем значение в массив
+          } else {
+            if (!Array.isArray(fields[name])) {
+              fields[name] = [fields[name]]; // Если значение не массив, делаем его массивом
+            }
+            fields[name].push(value);
           }
-          fields[name].push(value);
         } else {
           fields[name] = value;
         }
       }
-
+      console.log(fields);
       await addTask(fields, userId, boardId, selectedStateId);
 
       handleCloseTaskModal();
@@ -75,7 +83,18 @@ const { data: tasks, isLoading: isTasksLoading, refetch } = useQuery(
       console.error(error);
     }
   };
-
+  const validateForm = (formData) => {
+    const title = formData.get('title');
+    const description = formData.get('description');
+    const deadline = formData.get('deadline');
+    const userIds = formData.getAll('userIds');
+  
+    if (!title || !description || !deadline || userIds.length === 0) {
+      return false; // Если хотя бы одно из обязательных полей не заполнено
+    }
+    return true; // Все обязательные поля заполнены
+  };
+  
   return (
     <div className="state flex flex-col w-[350px] mr-4 overflow-y-auto" key={state.id}>
       <Notification status="success" open={openNotifSuccessTask}>
@@ -102,14 +121,16 @@ const { data: tasks, isLoading: isTasksLoading, refetch } = useQuery(
                 <input required className="rounded-md p-2" type="text" name="description" placeholder="Description" />
               </div>
               <div className="mb-4">
-                <label>Choose date and time:</label>
+                <label>Дедлайн: </label>
                 <input type="datetime-local" name="deadline" className="rounded-md p-2" />
               </div>
               <div className="flex flex-col mb-4">
                 {users.map((user, index) => (
                   <div key={index} className="flex items-center">
                     <input type="checkbox" name="userIds" value={user.id} className="mr-2" />
-                    <label>{user.name}</label>
+                    <label>
+                      {user.name}#{user.id}
+                    </label>
                   </div>
                 ))}
               </div>

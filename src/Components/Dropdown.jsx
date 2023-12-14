@@ -9,9 +9,9 @@ const Dropdown = ({ children }) => {
         <MoreVertIcon onClick={() => setIsOpen(!isOpen)}/>
         {isOpen && 
           theme === "light" ? (
-            <div className="dropdown-content bg-[#ffffff]">{children}</div>
+            <div className="border shadow-xl rounded-lg p-2 min-w-max dropdown-content space-x-2 bg-[#ffffff]">{children}</div>
           ) : (
-            <div className="dropdown-content bg-[#202020]">{children}</div>
+            <div className="border shadow-xl rounded-lg p-2 min-w-max dropdown-content space-x-2 bg-[#202020]">{children}</div>
           )         
         }
       </div>

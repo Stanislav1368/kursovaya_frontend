@@ -10,7 +10,7 @@ export default {
   plugins: [],
   variants: {
     extend: {
-      margin: ["first", "responsive"], // Добавляем новую вариацию для отступов
+      
     },
   },
 }

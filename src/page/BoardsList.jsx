@@ -17,6 +17,8 @@ import Notification from "../Components/Notification";
 import moment from "moment/moment";
 import Navbar from "../Components/Navbar";
 import Dropdown from "../Components/Dropdown";
+import EditIcon from "@mui/icons-material/Edit";
+
 const BoardsList = () => {
   const { theme, updateTheme } = useContext(ThemeContext);
   const queryClient = useQueryClient();
@@ -81,11 +83,11 @@ const BoardsList = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     updateTheme(newTheme);
   };
-  
+
   return (
     <div>
       <MyModal open={openAddBoardModal} onClose={handleCloseAddBoardModal} header="Новая доска">
-        <form onSubmit={addBoard} className="flex flex-col items-start">
+        <form onSubmit={addBoard} className="flex flex-col items-start space-y-3">
           <input required type="text" name="title" placeholder="title" />
           <button type="submit">Добавить доску</button>
         </form>
@@ -96,15 +98,16 @@ const BoardsList = () => {
       <Navbar></Navbar>
       <div className="flex items-center justify-center mt-5 sm:mt-10 md:mt-20">
         <div className="container  justify-center flex avatar-card ">
-          <div className="w-[20%] ">
+          <div className="w-[20%]">
             <img
-              src="https://sun9-26.userapi.com/impg/3xLHrlF1PCbxrswiSugRewpAo6G4DQ6ah6_KOw/8kHfAXJhedE.jpg?size=481x645&quality=96&sign=2b1ffbedbe5606c49480bc18ab9529d8&type=album"
+              src="https://sartur.sgu.ru/wp-content/uploads/2021/09/avatar1-1536x1536.png"
               class="h-36 sm:h-48 md:h-60 w-36 sm:w-48 md:w-60 rounded-full object-cover"
               alt="круглое изображение"
             />
-            <span className=" text-2xl overflow-hidden" itemprop="name">
-              {user.name}
-            </span>
+            <div className="flex">
+              <h1 className="text-4xl font-bold">{user.name}</h1>
+              <EditIcon />
+            </div>
           </div>
           <div className="w-[50%] rounded-lg list-boards">
             <div className="p-[15px] header-list-boards flex items-center justify-between rounded-t-lg">
@@ -122,7 +125,7 @@ const BoardsList = () => {
                         <Link to={`/boards/${board.id}`} className="hover:text-blue-500 hover:underline h-[200px]">
                           {board.title}
                         </Link>
-                        
+
                         <div className="text-[12px] text-[#504f4f]">Создана {moment.utc(board.createdAt).format("DD.MM.YYYY")}</div>
                         <UsersBoardList boardId={board.id} />
                       </li>

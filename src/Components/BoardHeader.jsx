@@ -9,22 +9,11 @@ import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 import ArchiveIcon from "@mui/icons-material/Archive";
 import SettingsAccessibilityIcon from "@mui/icons-material/SettingsAccessibility";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import {
-  addState,
-  addUserInBoard,
-  createPriority,
-  createRole,
-  deleteBoard,
-  fetchUser,
-  fetchUsersByBoard,
-  getRoles,
-  updateBoard,
-  updateRole,
-} from "../api";
+import { addState, addUserInBoard, createPriority, createRole, deleteBoard, fetchUsersByBoard, getRoles, updateBoard, updateRole } from "../api";
 import MyModal from "./MyModal";
 import Notification from "./Notification";
-import Button from "./Button";
 import Dropdown from "./Dropdown";
+import Button from "./Button";
 
 const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId }) => {
   const { data: roles, isLoading: isRolesLoading } = useQuery("roles", () => getRoles(board.id), {
@@ -108,10 +97,6 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
     },
   });
   const { data: users, isLoading: isUsersLoading } = useQuery(["usersBoard", board.id], () => fetchUsersByBoard(board.id));
-  // const { data: user, isLoading: isUserLoading } = useQuery("user", fetchUser, {
-  //   refetchOnWindowFocus: false,
-  //   keepPreviousData: true,
-  // });
   const handleAddUserInBoard = async (event, boardId) => {
     event.preventDefault();
     try {
@@ -198,7 +183,6 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
       const formData = new FormData(event.target);
       const fields = Object.fromEntries(formData);
 
-      // Преобразование значений чекбоксов
       fields.canEditBoardInfo = Boolean(fields.canEditBoardInfo);
       fields.canAddColumns = Boolean(fields.canAddColumns);
       fields.canAddUsers = Boolean(fields.canAddUsers);
@@ -219,7 +203,7 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
   }
 
   return (
-    <div className="board-header  h-[150px] p-[15px] space-y-5 ">
+    <div className="board-header h-[150px] p-[15px] space-y-5 ">
       <div>
         <Notification status="success" open={openNotifSuccessState}>
           таблица успешно создана
@@ -299,15 +283,15 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
           ))}
         </MyModal>
         <MyModal open={openAddUserModal} onClose={handleCloseAddUserModal} header="Добавить пользователя">
-          <form onSubmit={(event) => handleAddUserInBoard(event, board.id)} className="">
-            <input required className="w-[50%]" type="text" name="userId" placeholder="userId" />
-            <button type="submit" className="w-[50%]">
+          <form onSubmit={(event) => handleAddUserInBoard(event, board.id)} className="flex flex-col">
+            <input required className="" type="text" name="userId" placeholder="userId" />
+            <button type="submit" className="w-[50%] mt-3 self-end">
               Добавить пользователя
             </button>
           </form>
         </MyModal>
         <MyModal open={openPriorityModal} onClose={handleClosePriorityModal} header="Создать новый приоритет">
-          <div className="space-x-[15px]">
+          <div className="">
             {priorities.map((priority, index) => (
               // <div
               //   key={priority?.id}
@@ -324,11 +308,14 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
             ))}
           </div>
 
-          <form onSubmit={(event) => createPriorityForBoard(event, board.id)} className="">
-            <input required className="w-[50%]" type="text" name="name" placeholder="Наименование" />
-            <input type="number" id="tentacles" name="index" min="1" max="99" />
-            <div className="flex flex-row">
-              <input className="mb-[15px]" type="color" name="color" value={selectedColor} onChange={handleColorChange} />
+          <form onSubmit={(event) => createPriorityForBoard(event, board.id)} className=" space-y-3">
+            <div className="space-x-3">
+              <input required className="w-[50%]" type="text" name="name" placeholder="Наименование" />
+              <input type="number" id="tentacles" name="index" min="1" max="99" />
+            </div>
+
+            <div className="flex flex-row space-x-3">
+              <input className="" type="color" name="color" value={selectedColor} onChange={handleColorChange} />
               <label>Цвет</label>
             </div>
             <button type="submit" className="w-[50%]">
@@ -338,7 +325,7 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
         </MyModal>
         <MyModal open={openAddSectionModal} onClose={handleCloseAddSectionModal} header="Новая секция">
           <form onSubmit={handleAddState} className="flex flex-col items-start space-y-3">
-            <input required type="text" name="title" placeholder="title" />
+            <input required type="text" name="title" placeholder="Заголовок" />
             <button type="submit">Добавить секцию</button>
           </form>
         </MyModal>
@@ -418,7 +405,7 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
           </button>
         ) : null}
         {isOwner || currentRole.canAccessStatistics ? (
-          <button
+          <button 
             className="p-[6px]"
             onClick={() => {
               window.location.href = `/boards/${board.id}/archive`;
@@ -426,7 +413,7 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
             <ArchiveIcon /> Архив
           </button>
         ) : null}
-
+       
       </div>
     </div>
   );
