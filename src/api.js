@@ -1,6 +1,6 @@
 import axios from "axios";
 //const BASE_URL = "http://185.225.34.185:5000"; // Базовый URL API
-const BASE_URL = "http://localhost:5000"; // Базовый URL API
+const BASE_URL = "http://31.129.107.236:5000"; // Базовый URL API
 export async function login(data) {
   const response = await axios.post(`${BASE_URL}/auth/login`, data);
 
@@ -122,7 +122,7 @@ export const getRole = async (boardId, roleId) => {
   return response.data;
 };
 export async function createRole(data, boardId) {
-  console.log(data)
+  console.log(data);
   await axios.post(`${BASE_URL}/boards/${boardId}/roles`, data);
 }
 export async function updateRole(userId, boardId, updatedData) {
