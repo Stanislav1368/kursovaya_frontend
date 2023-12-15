@@ -1,12 +1,12 @@
 import "./App.css";
-import Board from "./page/Board";
-import BoardsList from "./page/BoardsList";
+import Board from "./Pages/Board";
+import BoardsList from "./Pages/BoardsList";
 import ThemeContext from "./ThemeContext";
-import LoginPage from "./page/LoginPage";
+import LoginPage from "./Pages/LoginPage";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import RegistrationPage from "./page/RegistrationPage";
+import RegistrationPage from "./Pages/RegistrationPage";
 import { useEffect, useState } from "react";
-import Archive from "./page/Archive";
+import Archive from "./Pages/Archive";
 import { jwtDecode } from "jwt-decode";
 
 

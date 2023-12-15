@@ -5,7 +5,10 @@ import MyModal from "./MyModal";
 import DescriptionIcon from "@mui/icons-material/Description";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import moment from "moment";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import Dropdown from "./Dropdown";
+import ArchiveIcon from "@mui/icons-material/Archive";
+
 const Task = ({ userId, boardId, state, task, currentRole, queryClient_ }) => {
   const queryClient = useQueryClient();
 
@@ -93,14 +96,19 @@ const Task = ({ userId, boardId, state, task, currentRole, queryClient_ }) => {
               {taskData.title}
             </p>
             <Dropdown>
-              <button className="p-1"
+              <button
+                className="p-1"
                 onClick={async () => {
                   await taskChangeArchivingStatus(userId, boardId, state.id, task.id, true);
                   await queryClient_.invalidateQueries(["tasks"]);
                 }}>
-                В архив
+                    <ArchiveIcon />
               </button>
-              <button className="p-1">Удалить</button>
+
+              <button className="p-1 cursor-pointer hover:text-red-500 flex items-center" onClick={() => {}}>
+                <DeleteForeverIcon />
+
+              </button>
             </Dropdown>
           </div>
           {taskData.users.some((user) => user.id === userId) && (

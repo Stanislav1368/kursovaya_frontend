@@ -342,7 +342,7 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
 
       <div className="flex items-center">
         <>
-          {currentRole.canEditBoardInfo ? (
+          {isEditing ? (
             <div className="space-x-[15px] flex items-center">
               <input className="text-3xl font-bold w-[250px] h-[35px]" type="text" value={newTitle} onChange={handleTitleChange} />
               <button className="p-[5px] h-[35px]" onClick={() => handleSaveClick()}>
@@ -357,7 +357,7 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
               <h1 className="text-4xl font-bold">
                 {board.title}#{board.id}
               </h1>
-              {currentRole.canEditBoardInfo && <EditIcon onClick={handleEditClick} />}
+              {currentRole.canEditBoardInfo  && <EditIcon onClick={handleEditClick} />}
               <Dropdown>
                 {isOwner ? (
                   <p
