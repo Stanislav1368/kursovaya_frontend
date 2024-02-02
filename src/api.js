@@ -1,6 +1,23 @@
 import axios from "axios";
-//const BASE_URL = "http://185.225.34.185:5000"; // Базовый URL API
-const BASE_URL = "http://31.129.107.236:5000"; // Базовый URL API
+import io from "socket.io-client";
+// const BASE_URL = "http://31.129.107.236:5000"; // Базовый URL API
+const BASE_URL = "http://localhost:5000"; // Базовый URL API
+
+export default class SocketApi {
+  static socket;
+
+  static createConnection() {
+    this.socket = io("http://localhost:5000");
+
+    this.socket.on("connect", () => {
+      console.log("connected");
+    });
+
+    this.socket.on("disconnect", (e) => {
+      console.log("disconnected");
+    });
+  }
+}
 export async function login(data) {
   const response = await axios.post(`${BASE_URL}/auth/login`, data);
 
@@ -18,7 +35,9 @@ export async function addUserInBoard(userId, boardId) {
   await axios.post(`${BASE_URL}/users/${userId}/boards/${boardId}`);
 }
 export async function AddBoard(data, userId) {
-  await axios.post(`${BASE_URL}/users/${userId}/boards`, data);
+  const response = await axios.post(`${BASE_URL}/users/${userId}/boards`, data);
+  console.log(response.data);
+  return response.data;
 }
 
 export async function addState(data, userId, boardId) {
@@ -26,7 +45,7 @@ export async function addState(data, userId, boardId) {
 }
 
 export async function addTask(data, userId, boardId, stateId) {
-  console.log(data);
+
   await axios.post(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks`, data);
 }
 export async function deleteTask(userId, boardId, stateId, taskId) {
@@ -37,23 +56,23 @@ export async function deleteState(userId, boardId, stateId) {
 }
 
 export async function deleteBoard(userId, boardId) {
-  console.log(userId, boardId);
+
   await axios.delete(`${BASE_URL}/users/${userId}/boards/${boardId}`);
 }
 export async function taskChangeArchivingStatus(userId, boardId, stateId, taskId, isArchived) {
   await axios.put(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks/${taskId}/archive`, { isArchived: isArchived });
 }
 export async function updateTask(userId, boardId, stateId, taskId, newState) {
-  console.log(userId, boardId, stateId, taskId, newState);
+
   await axios.put(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks/${taskId}`, { newStateId: newState });
 }
 export async function updateTaskIsCompleted(userId, boardId, stateId, taskId, updatedIsCompleted) {
-  console.log(updatedIsCompleted);
+
   await axios.put(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks/${taskId}/isCompleted`, updatedIsCompleted);
 }
 
 export async function updateTaskTitle(userId, boardId, stateId, taskId, data) {
-  console.log(data);
+
   await axios.put(`${BASE_URL}/users/${userId}/boards/${boardId}/states/${stateId}/tasks/${taskId}`, { newStateId: newState, newOrder: newOrderNum });
 }
 
@@ -62,6 +81,7 @@ export async function updateBoard(userId, boardId, updatedData) {
 }
 export const fetchBoards = async (userId) => {
   const response = await axios.get(`${BASE_URL}/users/${userId}/boards`);
+  console.log(response.data);
   return response.data;
 };
 
@@ -75,7 +95,7 @@ export const fetchStates = async (userId, boardId) => {
   return response.data;
 };
 export const getIsArchivedTasks = async (userId, boardId) => {
-  console.log(userId);
+
   const response = await axios.get(`${BASE_URL}/users/${userId}/boards/${boardId}/tasks`);
   return response.data;
 };
@@ -85,7 +105,7 @@ export async function fetchUserId() {
   const response = await axios.get(`${BASE_URL}/users/currentUser`, {
     headers,
   });
-  console.log(response.data.id);
+
   return response.data.id;
 }
 
@@ -122,7 +142,7 @@ export const getRole = async (boardId, roleId) => {
   return response.data;
 };
 export async function createRole(data, boardId) {
-  console.log(data);
+
   await axios.post(`${BASE_URL}/boards/${boardId}/roles`, data);
 }
 export async function updateRole(userId, boardId, updatedData) {
@@ -149,4 +169,5 @@ export const getPriority = async (boardId, priorityId) => {
 };
 export async function createPriority(data, boardId) {
   await axios.post(`${BASE_URL}/boards/${boardId}/priorities`, data);
+
 }

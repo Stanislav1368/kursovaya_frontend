@@ -6,12 +6,12 @@ const Dropdown = ({ children }) => {
     const { theme } = useContext(ThemeContext);
     return (
       <div className="dropdown">
-        <MoreVertIcon onClick={() => setIsOpen(!isOpen)}/>
+        <MoreVertIcon MouseOver ={() => setIsOpen(!isOpen)}/>
         {isOpen && 
           theme === "light" ? (
-            <div className="border shadow-xl rounded-lg p-2 min-w-max dropdown-content space-x-2 bg-[#ffffff]">{children}</div>
+            <div style={{backgroundColor: "#FFFFFF"}} className='dropdown-content'>{children}</div>
           ) : (
-            <div className="border shadow-xl rounded-lg p-2 min-w-max dropdown-content space-x-2 bg-[#202020]">{children}</div>
+            <div style={{backgroundColor: "#202020"}} className='dropdown-content'>{children}</div>
           )         
         }
       </div>

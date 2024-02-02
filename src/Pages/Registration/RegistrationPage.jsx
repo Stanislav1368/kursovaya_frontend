@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
-import { registration } from "../api";
-
+import { registration } from "../../api";
 
 const RegistrationPage = () => {
   const navigate = useNavigate();
@@ -41,36 +40,22 @@ const RegistrationPage = () => {
   return (
     <div className="flex items-center justify-center h-[100%]">
       <div className="form-login flex flex-col justify-between items-center  h-[400px] w-[400px] ">
-        <form
-          onSubmit={handleRegistration}
-          className=" px-10 flex flex-col justify-between items-center  h-full w-full">
+        <form onSubmit={handleRegistration} className=" px-10 flex flex-col justify-between items-center  h-full w-full">
           <h1 className="mt-5">РЕГИСТРАЦИЯ</h1>
           <div className="">
-            <input
-              className="focus:outline-none  w-full p-3"
-              type="email"
-              name="email"
-              placeholder="email"
-            />
-            <input
-              className=" focus:outline-none mt-2 w-full p-3"
-              type="password"
-              name="password"
-              placeholder="password"
-            />
+            <input className="focus:outline-none  w-full p-3" type="email" name="email" placeholder="email" />
+            <input className=" focus:outline-none mt-2 w-full p-3" type="password" name="password" placeholder="password" />
           </div>
           <div className="flex flex-col w-full items-center mb-5">
             <button className="mt-3 p-3 w-full" type="submit">
               Регистрация
             </button>
-            {error ? (
-              <span className="text-red-600">Неверная почта или пароль</span>
-            ) : null}
+            {error ? <span className="text-red-600">Неверная почта или пароль</span> : null}
             <a className=" text-blue-500 underline" href="/login">
               Логин
             </a>
           </div>
-        </form>        
+        </form>
       </div>
     </div>
   );

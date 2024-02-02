@@ -9,33 +9,57 @@ import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 import ArchiveIcon from "@mui/icons-material/Archive";
 import SettingsAccessibilityIcon from "@mui/icons-material/SettingsAccessibility";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { addState, addUserInBoard, createPriority, createRole, deleteBoard, fetchUsersByBoard, getRoles, updateBoard, updateRole } from "../api";
-import MyModal from "./MyModal";
-import Notification from "./Notification";
-import Dropdown from "./Dropdown";
-import Button from "./Button";
+import { addState, addUserInBoard, createPriority, createRole, deleteBoard, fetchUsersByBoard, getRoles, updateBoard, updateRole } from "../../api";
+import MyModal from "../MyModal";
+import Notification from "../Notification";
+import Dropdown from "../Dropdown";
+import Button from "../Button";
+import { CheckBox, DisabledByDefault } from "@mui/icons-material";
+import "./BoardHeader.css";
 
-const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId }) => {
+const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId, onBoardDelete, handleChangeBoardTitle }) => {
   const { data: roles, isLoading: isRolesLoading } = useQuery("roles", () => getRoles(board.id), {
     refetchOnWindowFocus: false,
     keepPreviousData: true,
   });
+  const russianPrivileges = [
+    "Изменение информации о доске",
+    "Добавление колонок",
+    "Добавление пользователей",
+    "Добавление приоритетов",
+    "Создание ролей",
+    "Доступ к статистике",
+    "Создание отчетов",
+    "Доступ к архиву",
+  ];
+
+  // Пример соответствия английских и русскоязычных названий прав
+  const privilegesMap = {
+    canEditBoardInfo: "Изменение информации о доске",
+    canAddColumns: "Добавление колонок",
+    canAddUsers: "Добавление пользователей",
+    canAddPriorities: "Добавление приоритетов",
+    canCreateRoles: "Создание ролей",
+    canAccessStatistics: "Доступ к статистике",
+    canCreateReports: "Создание отчетов",
+    canAccessArchive: "Доступ к архиву",
+  };
   const privileges = [
     "canEditBoardInfo",
 
     "canAddColumns",
-    
+
     "canAddUsers",
-    
+
     "canAddPriorities",
-    
+
     "canCreateRoles",
-    
+
     "canAccessStatistics",
-    
+
     "canCreateReports",
-    
-    "canAccessArchive"
+
+    "canAccessArchive",
   ];
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState();
@@ -94,6 +118,7 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
   const handleSaveClick = () => {
     if (newTitle) {
       console.log(newTitle);
+      handleChangeBoardTitle(board.id, newTitle)
       updateBoardMutation.mutate(newTitle);
       setIsEditing(false);
     }
@@ -179,7 +204,7 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
     await updateRole(userId, board.id, { roleId });
     queryClient.invalidateQueries(["usersBoard", board.id]);
   }
-  
+
   const CreatePriorityMutation = useMutation((data) => createPriority(data, board.id), {
     onSuccess: () => queryClient.invalidateQueries(["priorities"]),
   });
@@ -201,19 +226,19 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
       fields.canAccessArchive = Boolean(fields.canAccessArchive);
 
       handleCloseRolesModal();
-      console.log(fields)
+      console.log(fields);
       CreateRoleMutation.mutate(fields);
     } catch (error) {
       console.error(error);
     }
   };
   if (isRolesLoading || isUsersLoading) {
-    return <div>1</div>;
+    return <div></div>;
   }
 
   return (
-    <div className="board-header h-[150px] p-[15px] space-y-5 ">
-      <div>
+    <>
+      <>
         <Notification status="success" open={openNotifSuccessState}>
           таблица успешно создана
         </Notification>
@@ -244,7 +269,7 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
                         const checked = e.target.checked;
                       }}
                     />
-                    <label key={privilege.id}>{privilege}</label>
+                    <label key={privilege.id}>{russianPrivileges[index]}</label>
                   </div>
                 ))}
               </div>
@@ -333,48 +358,38 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
           </form>
         </MyModal>
         <MyModal open={openAddSectionModal} onClose={handleCloseAddSectionModal} header="Новая секция">
-          <form onSubmit={handleAddState} className="flex flex-col items-start space-y-3">
-            <input required type="text" name="title" placeholder="Заголовок" />
+          <form onSubmit={handleAddState} style={{display: "flex", flexDirection: "column"}}>
+            <input style={{margin: "0px"}} required type="text" name="title" placeholder="Заголовок" />
             <button type="submit">Добавить секцию</button>
           </form>
         </MyModal>
-      </div>
+      </>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        {isEditing ? (
+          <div>
+            <input type="text" value={newTitle} onChange={handleTitleChange} />
+            <CheckBox className="ok" onClick={() => handleSaveClick()}>
+              Save
+            </CheckBox>
+            <DisabledByDefault className="close" onClick={handleCancelClick}></DisabledByDefault>
+          </div>
+        ) : (
+          <>
+            <h1>{board.title}</h1>
+            {/* {console.log(currentRole.canEditBoardInfo)} */}
+            {currentRole.canEditBoardInfo || (isOwner && <EditIcon onClick={handleEditClick} />)}
+            <Dropdown>
+              {isOwner ? (
+                <p onClick={() => onBoardDelete(boardId)}>
+                  <DeleteForeverIcon />
+                  Удалить
+                </p>
+              ) : null}
+            </Dropdown>
+          </>
+        )}
 
-      <div className="flex items-center">
-        <>
-          {isEditing ? (
-            <div className="space-x-[15px] flex items-center">
-              <input className="text-3xl font-bold w-[250px] h-[35px]" type="text" value={newTitle} onChange={handleTitleChange} />
-              <button className="p-[5px] h-[35px]" onClick={() => handleSaveClick()}>
-                Save
-              </button>
-              <button className="p-[5px] h-[35px]" onClick={handleCancelClick}>
-                Cancel
-              </button>
-            </div>
-          ) : (
-            <>
-              <h1 className="text-4xl font-bold">
-                {board.title}#{board.id}
-              </h1>
-              {currentRole.canEditBoardInfo  && <EditIcon onClick={handleEditClick} />}
-              <Dropdown>
-                {isOwner ? (
-                  <p
-                    className=" mr-[0] cursor-pointer hover:text-red-500 flex items-center"
-                    onClick={() => {
-                      deleteBoard(userId, boardId);
-                      window.location.href = "/boards";
-                    }}>
-                    <DeleteForeverIcon />
-                    Удалить
-                  </p>
-                ) : null}
-              </Dropdown>
-            </>
-          )}
-        </>
-        <div className="avatar-overlay ms-5 flex flex-row">
+        <div style={{ display: "flex", gap: "2.5px" }}>
           {users
             .sort((a, b) => a.id - b.id)
             .map((user, index) => (
@@ -382,48 +397,29 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId 
             ))}
         </div>
       </div>
-      <div className="flex flex-row items-center space-x-[15px]">
+      <div className="func-btn">
         {isOwner || currentRole.canAddColumns ? (
-          <button className="p-[6px]" onClick={handleOpenAddSectionModal}>
-            <ViewColumnIcon /> Добавить секцию
-          </button>
+          <Button onClick={handleOpenAddSectionModal} icon={<ViewColumnIcon />} text="Добавить секцию" />
         ) : null}
         {isOwner || currentRole.canAddUsers ? (
-          <button className="p-[6px]" onClick={handleOpenAddUserModal}>
-            <PersonAddIcon /> Добавить пользователя
-          </button>
+          <Button onClick={handleOpenAddUserModal} icon={<PersonAddIcon />} text="Добавить пользователя" />
         ) : null}
         {isOwner || currentRole.canAddPriorities ? (
-          <button className="p-[6px]" onClick={handleOpenPriorityModal}>
-            <PriorityHighIcon /> Добавить приоритет
-          </button>
+          <Button onClick={handleOpenPriorityModal} icon={<PriorityHighIcon />} text="Добавить приоритет" />
         ) : null}
-        {isOwner || currentRole.canCreateRoles ? (
-          <button className="p-[6px]" onClick={handleOpenRolesModal}>
-            <SettingsAccessibilityIcon /> Роли
-          </button>
-        ) : null}
-        {isOwner ? (
-          <button className="p-[6px]" onClick={handleOpenAccessSettingsModal}>
-            <SettingsAccessibilityIcon /> Настройки доступа
-          </button>
-        ) : null}
-        {isOwner || currentRole.canAccessStatistics ? (
-          <button className="p-[6px]">
-            <LeaderboardIcon /> Статистика
-          </button>
-        ) : null}
-        {isOwner || currentRole.canAccessStatistics ? (
-          <button
-            className="p-[6px]"
+        {isOwner || currentRole.canCreateRoles ? <Button onClick={handleOpenRolesModal} icon={<SettingsAccessibilityIcon />} text="Роли" /> : null}
+        {isOwner ? <Button onClick={handleOpenAccessSettingsModal} icon={<SettingsAccessibilityIcon />} text="Настройки доступа" /> : null}
+        {/* {isOwner || currentRole.canAccessStatistics ? (
+          <Button
             onClick={() => {
               window.location.href = `/boards/${board.id}/archive`;
-            }}>
-            <ArchiveIcon /> Архив
-          </button>
-        ) : null}
+            }}
+            icon={<ArchiveIcon />}
+            text="Архив"
+          />
+        ) : null} */}
       </div>
-    </div>
+    </>
   );
 };
 

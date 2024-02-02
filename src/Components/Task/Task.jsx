@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
-import { updateTaskIsCompleted, getTask, taskChangeArchivingStatus } from "../api";
-import MyModal from "./MyModal";
+import { updateTaskIsCompleted, getTask, taskChangeArchivingStatus } from "../../api";
+import MyModal from "../MyModal";
 import DescriptionIcon from "@mui/icons-material/Description";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import moment from "moment";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import Dropdown from "./Dropdown";
+import Dropdown from "../Dropdown";
 import ArchiveIcon from "@mui/icons-material/Archive";
+import "./Task.css";
 
 const Task = ({ userId, boardId, state, task, currentRole, queryClient_ }) => {
   const queryClient = useQueryClient();
@@ -51,7 +52,7 @@ const Task = ({ userId, boardId, state, task, currentRole, queryClient_ }) => {
   }
   return (
     // ${index > 0 ? "mt-4" : ""}
-    <div className={`items-center rounded p-4 `} key={task?.id}>
+    <>
       <MyModal open={openTaskModal} onClose={handleCloseTaskModal} header={`${taskData.title}`}>
         <div className="w-[850px] overflow-y-auto flex flex-row p-[15px] justify-between">
           <div className="">
@@ -61,7 +62,7 @@ const Task = ({ userId, boardId, state, task, currentRole, queryClient_ }) => {
                 Срок
               </div>
               <p className="ms-[25px] italic">Создана: {moment.utc(task.createdAt).utcOffset(5).format("DD/MM/YYYY HH:mm")}</p>
-              <p className="ms-[25px] italic">Дедлайн:{moment.utc(task.deadline).format("DD.MM.YYYY")}</p>
+              <p className="ms-[25px] italic">Дедлайн:{moment.utc(task.endDate).format("DD.MM.YYYY")}</p>
             </div>
             <div>
               <div className="text-xl">
@@ -86,55 +87,60 @@ const Task = ({ userId, boardId, state, task, currentRole, queryClient_ }) => {
           </div> */}
         </div>
       </MyModal>
-      <div className="flex justify-between ">
-        <div className="flex justify-between w-full">
-          <div className="flex">
-            <p
-              className={`text-base font-bold hover:text-blue-500 hover:underline ${taskData.isCompleted ? "line-through" : ""}`}
-              onClick={handleOpenTaskModal}
-              style={{ display: "flex", alignItems: "center" }}>
+      <div className="task">
+         <div className="">
+        <div className="">
+          <div style={{ display: "flex", gap: "1px", alignItems: "center" }} className="">
+            <h2 className={`${taskData.isCompleted ? "line-through" : ""}`} onClick={handleOpenTaskModal}>
               {taskData.title}
-            </p>
+            </h2>
             <Dropdown>
               <button
-                className="p-1"
+                className=""
                 onClick={async () => {
                   await taskChangeArchivingStatus(userId, boardId, state.id, task.id, true);
                   await queryClient_.invalidateQueries(["tasks"]);
                 }}>
-                    <ArchiveIcon />
+                <ArchiveIcon />
               </button>
 
               <button className="p-1 cursor-pointer hover:text-red-500 flex items-center" onClick={() => {}}>
                 <DeleteForeverIcon />
-
               </button>
             </Dropdown>
+            {taskData.users.some((user) => user.id === userId) && (
+              <input className="checkbox" type="checkbox" onChange={handleTaskCompletion} checked={taskData.isCompleted}></input>
+            )}
           </div>
-          {taskData.users.some((user) => user.id === userId) && (
-            <input className="checkbox" type="checkbox" onChange={handleTaskCompletion} checked={taskData.isCompleted}></input>
-          )}
         </div>
       </div>
-      <div className="flex justify-between items-center">
-        <div className="pt-2 flex justify-between w-full">
+      <div className="">
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }} className="">
           <div>
             {taskData.users?.map((user, index) => (
               <div key={index}>{user.name}</div>
             ))}
-          </div>
+          </div>  
           <div>
             {taskData.priority && (
               <label
-                style={{ borderColor: taskData.priority?.color, backgroundColor: taskData.priority?.color, fontSize: "12px" }}
-                className="label w-min rounded-[5px] px-[8px] border-[1px] items-center mb-[5px] font-bold text-3xl">
+                style={{
+                  borderColor: taskData.priority?.color,
+                  backgroundColor: taskData.priority?.color,
+                  fontSize: "12px",
+                  padding: "2px",
+                  borderRadius: "5px",
+                }}
+                className="">
                 {taskData.priority?.name}
               </label>
             )}
           </div>
         </div>
       </div>
-    </div>
+      </div>
+     
+    </>
   );
 };
 

@@ -1,15 +1,13 @@
 import "./App.css";
 import Board from "./Pages/Board";
-import BoardsList from "./Pages/BoardsList";
 import ThemeContext from "./ThemeContext";
-import LoginPage from "./Pages/LoginPage";
+import LoginPage from "./Pages/Login/LoginPage";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import RegistrationPage from "./Pages/RegistrationPage";
+import RegistrationPage from "./Pages/Registration/RegistrationPage";
 import { useEffect, useState } from "react";
 import Archive from "./Pages/Archive";
 import { jwtDecode } from "jwt-decode";
-
-
+import Boards from "./Pages/Boards/Boards";
 
 
 const isAuthenticated = () => {
@@ -30,9 +28,8 @@ const RequireAuth = ({ children }) => {
 };
 
 function App() {
-  const [theme, setTheme] = useState(getSavedTheme() || 'light');
+  const [theme, setTheme] = useState(getSavedTheme() || "light");
 
-  // Функция для обновления значения темы
   useEffect(() => {
     setSavedTheme(theme);
   }, [theme]);
@@ -59,19 +56,17 @@ function App() {
                 <RequireAuth>
                   <Navigate to="/boards" />
                 </RequireAuth>
-              }
-            ></Route>
+              }></Route>
             <Route
               index
               path="boards/"
               element={
                 <RequireAuth>
                   <ThemeContext.Provider value={{ theme, updateTheme }}>
-                    <BoardsList />
+                    <Boards />
                   </ThemeContext.Provider>
                 </RequireAuth>
-              }
-            ></Route>
+              }></Route>
             <Route
               path="boards/:boardId"
               element={
@@ -80,9 +75,8 @@ function App() {
                     <Board />
                   </ThemeContext.Provider>
                 </RequireAuth>
-              }
-            ></Route>
-           <Route
+              }></Route>
+            <Route
               path="boards/:boardId/archive"
               element={
                 <RequireAuth>
@@ -90,8 +84,7 @@ function App() {
                     <Archive />
                   </ThemeContext.Provider>
                 </RequireAuth>
-              }
-            ></Route>
+              }></Route>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/registration" element={<RegistrationPage />} />
           </Route>

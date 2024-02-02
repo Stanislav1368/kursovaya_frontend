@@ -1,0 +1,73 @@
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.login-form {
+  border-radius: 8px;
+  display: flex;
+
+  flex-direction: column;
+  background-color: var(--primary-color);
+  padding: 10px 50px;
+  gap: 15px;
+}
+.login-form h1 {
+  display: flex;
+  justify-content: center;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin: 0px 25px;
+}
+
+.input-group input {
+  padding: 10px;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  margin: 25px 25px 0px 25px;
+}
+
+.login-btn {
+  background-color: var(--accent-color);
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+}
+
+a {
+  margin-top: 5px;
+  justify-content: end;
+  display: flex;
+}
+/* Указываем минимальную ширину, при которой нам нужно менять стили */
+@media (max-width: 768px) {
+  .login-form {
+    padding: 10px;
+  }
+  .input-group, .button-group {
+    margin: 0 10px;
+  }
+  /* Другие адаптивные стили на ваш выбор */
+}
+
+/* Возможно, нам нужны отдельные стили для еще более узких экранов */
+@media (max-width: 480px) {
+  .login-form {
+    padding: 5px;
+  }
+  .input-group, .button-group {
+    margin: 0 5px;
+  }
+  /* Другие адаптивные стили на ваш выбор */
+}

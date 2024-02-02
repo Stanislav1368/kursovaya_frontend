@@ -27,9 +27,9 @@ const MyModal = ({ open, onClose, children, header }) => {
     open && (
       <div className="modal-container" onClick={handleClose}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <div className="flex items-center justify-between space-x-2">
-            {header && <h2 className="text-2xl font-bold">{header}</h2>}
-            <span className="close-button text-2xl font-bold" onClick={handleClose}>
+          <div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
+            {header && <h3 className="text-2xl font-bold">{header}</h3>}
+            <span style={{cursor: "pointer"}} onClick={handleClose}>
               ✕
             </span>
           </div>

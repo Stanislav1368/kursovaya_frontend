@@ -1,21 +1,20 @@
-import { useState } from "react";
-import { IconButton, Tooltip } from "@mui/material";
 import React from "react";
+import PropTypes from "prop-types";
+import "./Button.css";
 
-const Button = ({ icon, text }) => {
-    const [isHovered, setIsHovered] = useState(false);
-  
-    return (
-      <div className="button-container"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <button className="p-[10px]">
-          {icon}
-          {isHovered && <span>{text}</span>}
-        </button>
-      </div>
-    );
-  };
-  
-  export default Button;
+const Button = ({ onClick, icon, text, textSize, iconSize }) => {
+  return (
+    <button onClick={onClick} className="custom-button">
+      <span style={{ fontSize: textSize, marginRight: "5px" }}>{icon}</span>
+      <span style={{ fontSize: textSize }}>{text}</span>
+    </button>
+  );
+};
+
+Button.propTypes = {
+  onClick: PropTypes.func,
+  icon: PropTypes.element,  
+  text: PropTypes.string,
+};
+
+export default Button;

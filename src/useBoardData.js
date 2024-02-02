@@ -2,8 +2,8 @@ import { useQuery } from "react-query";
 import { fetchBoardById, fetchStates, fetchUserId, fetchUsersByBoard, getPriorities, getRoleByBoardId, getCurrentRole } from "./api";
 import { useParams } from "react-router-dom";
 
-const useBoardData = () => {
-  const { boardId } = useParams();
+const useBoardData = (boardId) => {
+  // const { boardId } = useParams();
 
   const { data: userId, isLoading: isUserIdLoading } = useQuery("userId", fetchUserId, {
     refetchOnWindowFocus: false,

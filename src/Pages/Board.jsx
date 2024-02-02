@@ -1,18 +1,31 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { addTask, deleteState, updateTask } from "../api";
-import { useMutation, useQueryClient } from "react-query";
+import SocketApi, { addTask, deleteState, fetchStates, updateTask } from "../api";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import Navbar from "../Components/Navbar";
-import BoardHeader from "../Components/BoardHeader";
+import BoardHeader from "../Components/boardHeader/BoardHeader";
 import Column from "../Components/Column";
 import useBoardData from "../useBoardData";
 
 const Board = () => {
+ 
+  useEffect(() => {
+    SocketApi.createConnection();
+    SocketApi.socket.on("newState", () => {
+      queryClient.invalidateQueries(["states"]);
+    });
+    SocketApi.socket.on("deleteState", () => {
+      queryClient.invalidateQueries(["states"]);
+    });
+    return () => {
+      SocketApi.socket.off("deleteState");
+    };
+  }, []);
   const [openTaskModal, setOpenTaskModal] = useState(false);
   const [currentStateId, setCurrentStateId] = useState(0);
   const [currentTaskId, setCurrentTaskId] = useState(0);
   const [selectedStateId, setSelectedStateId] = useState();
-  const { board, currentRole, isOwner, userId, priorities, users, states, isLoading } = useBoardData();
+  const { board, currentRole, isOwner, userId, priorities, users, isLoading } = useBoardData();
   const { boardId } = useParams();
   const queryClient = useQueryClient();
   const DeleteStateMutation = useMutation((stateId) => deleteState(userId, boardId, stateId), {
@@ -23,6 +36,11 @@ const Board = () => {
       queryClient.invalidateQueries(["tasks"]);
       queryClient.invalidateQueries(["states"]);
     },
+  });
+  const { data: states, isLoading: isStatesLoading } = useQuery("states", () => fetchStates(userId, boardId), {
+    enabled: !!userId,
+    refetchOnWindowFocus: false,
+    keepPreviousData: true,
   });
   if (isLoading) {
     return <div></div>;
@@ -54,31 +72,38 @@ const Board = () => {
   };
 
   return (
+
     <div>
       <Navbar userId={userId} boardId={boardId}></Navbar>
       <BoardHeader currentRole={currentRole} board={board} isOwner={isOwner} userId={userId} priorities={priorities} boardId={boardId}></BoardHeader>
       <div className="p-[15px] space-y-4">
-        <div className="main flex flex-row h-[calc(100vh-230px)]">
-          {states
-            .sort((a, b) => a.id - b.id)
-            .map((state) => (
-              <Column
-                key={state.id}
-                state={state}
-                users={users}
-                priorities={priorities}
-                DeleteStateMutation={DeleteStateMutation}
-                handleDragStart={handleDragStart}
-                handleDragEnd={handleDragEnd}
-                handleDragOver={handleDragOver}
-                handleDrop={handleDrop}
-                userId={userId}
-                boardId={boardId}
-                currentRole={currentRole}
-                dragLeaveHandler={dragLeaveHandler}
-              />
-            ))}
-        </div>
+        {states && states.length > 0 ? (
+          <div className="main flex flex-row h-[calc(100vh-230px)]">
+            {states
+              .sort((a, b) => a.id - b.id)
+              .map((state) => (
+                <Column
+                  key={state.id}
+                  state={state}
+                  users={users}
+                  priorities={priorities}
+                  DeleteStateMutation={DeleteStateMutation}
+                  handleDragStart={handleDragStart}
+                  handleDragEnd={handleDragEnd}
+                  handleDragOver={handleDragOver}
+                  handleDrop={handleDrop}
+                  userId={userId}
+                  boardId={boardId}
+                  currentRole={currentRole}
+                  dragLeaveHandler={dragLeaveHandler}
+                />
+              ))}
+          </div>
+        ) : (
+          <div className="text-center mt-8 text-gray-500">
+            <p>Здесь пока что пусто. Добавьте столбцы, чтобы начать работу!</p>
+          </div>
+        )}
       </div>
     </div>
   );

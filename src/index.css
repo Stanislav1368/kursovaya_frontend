@@ -1,4 +1,41 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url("https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap");
+body {
+  margin: 0;
+  padding: 0;
+}
+body *:not(.icon) {
+  color: var(--text-color);
+}
+* {
+  font-family: "Poppins", sans-serif;
+  outline: none;
+}
+svg {
+  color: red;
+}
 
+button:not(.slct-view) {
+  border-radius: 3px;
+  border: none;
+  padding: 5px;
+}
+button {
+  border: none;
+  padding: 5px;
+
+}
+
+.icon-button {
+  background-color: var(--background-color);
+}
+
+input {
+  border: none;
+}
+input:focus {
+  border: none;
+}
+
+input:focus::placeholder {
+  color: transparent; /* Цвет placeholder при фокусировке */
+}
