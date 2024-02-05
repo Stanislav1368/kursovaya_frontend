@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { fetchUserId, getIsArchivedTasks, taskChangeArchivingStatus } from "../api";
 import { QueryClient, useQuery, useQueryClient } from "react-query";
 
-const Archive = ({boardId}) => {
+const Archive = ({ boardId }) => {
   // const { boardId } = useParams();
   const queryClient = useQueryClient();
   const { data: userId, isLoading: isUserIdLoading } = useQuery("userId", fetchUserId, {
@@ -21,7 +21,6 @@ const Archive = ({boardId}) => {
   }
 
   return (
-
     <div>
       {/* <Navbar /> */}
       <main className="p-4 2xl:mx-[250px] mx-[0px] sm:mx-[0px] lg:mx-[0px]">

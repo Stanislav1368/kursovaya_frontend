@@ -1,10 +1,21 @@
 import { useState } from "react";
 import React, { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import SocketApi, { AddBoard, deleteBoard, deleteState, fetchBoards, fetchStates, fetchUser, fetchUserId, updateBoard, updateTask } from "../../api";
+import SocketApi, {
+  AddBoard,
+  deleteBoard,
+  deleteState,
+  fetchBoards,
+  fetchStates,
+  fetchUser,
+  fetchUserId,
+  getIsArchivedTasks,
+  taskChangeArchivingStatus,
+  updateBoard,
+  updateTask,
+} from "../../api";
 import useBoardData from "../../useBoardData";
-
-import Column from "../../Components/Column";
+import Column from "../../Components/Column/Column";
 import moment from "moment/moment";
 import Notification from "../../Components/Notification";
 import "./Boards.css";
@@ -13,9 +24,8 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
 import { useContext } from "react";
 import ThemeContext from "../../ThemeContext";
-import { DarkMode, LightMode } from "@mui/icons-material";
+import { DarkMode, LightMode, Logout } from "@mui/icons-material";
 import BoardHeader from "../../Components/boardHeader/BoardHeader";
-import Archive from "../Archive";
 
 const ListBoards = ({ boards, selectedBoard, onBoardSelect, onBoardAdd }) => {
   const [isInputVisible, setInputVisible] = useState(false);
@@ -46,54 +56,75 @@ const ListBoards = ({ boards, selectedBoard, onBoardSelect, onBoardAdd }) => {
     const newTheme = theme === "light" ? "dark" : "light";
     updateTheme(newTheme);
   };
+  const handleLogoutClick = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
   return (
     <div>
       <Notification status="success" open={openNotif}>
         Доска успешно создана
       </Notification>
-      <div style={{ listStyleType: "none", padding: 0, margin: 0, display: "flex", alignItems: "stretch", gap: "10px" }}>
-        {boards.map((board) => (
-          <button key={board.id} onClick={() => onBoardSelect(board.id)} className={`${selectedBoard?.id === board?.id ? "tab-selected" : "tab"}`}>
-            {board.title}
-          </button>
-        ))}
-        {isInputVisible && (
-          <>
-            <form onSubmit={handleAddBoard} className="">
-              <input required type="text" name="title" placeholder="title" />
-              <button className="icon-button" type="submit">
-                <CheckBoxIcon className="ok"></CheckBoxIcon>
-              </button>
-            </form>
-            <button
-              className="icon-button"
-              onClick={() => {
-                setInputVisible(!isInputVisible);
-              }}>
-              <DisabledByDefaultIcon className="close" />
-            </button>
-          </>
-        )}
-        {!isInputVisible && (
-          <button
-            className="icon-button"
-            onClick={() => {
-              setInputVisible(!isInputVisible);
-            }}>
-            <AddBoxIcon />
-          </button>
-        )}
+      {boards && (
+        <>
+          <div style={{ listStyleType: "none", padding: 0, margin: 0, display: "flex", alignItems: "stretch", gap: "10px" }}>
+            {console.log(boards)}
+            {boards.length > 0 ? (
+              <>
+                {boards.map((board) => (
+                  <button
+                    key={board.id}
+                    onClick={() => onBoardSelect(board.id)}
+                    className={`${selectedBoard?.id === board?.id ? "tab-selected" : "tab"}`}>
+                    {board.title}
+                  </button>
+                ))}
+              </>
+            ) : (
+              <div style={{ borderRadius: "5px", textAlign: "center", display: "flex", alignItems: "center", marginBottom: "5px" }}>Пусто!</div>
+            )}
 
-        {theme === "light" ? (
-          <button className="icon-button" onClick={handleButtonClick}>
-            <LightMode onClick={handleButtonClick} />
-          </button>
-        ) : (
-          <button className="icon-button" onClick={handleButtonClick}>
-            <DarkMode onClick={handleButtonClick} />
-          </button>
-        )}
-      </div>
+            {isInputVisible && (
+              <>
+                <form onSubmit={handleAddBoard} className="">
+                  <input required type="text" name="title" placeholder="title" />
+                  <button className="icon-button" type="submit">
+                    <CheckBoxIcon className="ok"></CheckBoxIcon>
+                  </button>
+                </form>
+                <button
+                  className="icon-button"
+                  onClick={() => {
+                    setInputVisible(!isInputVisible);
+                  }}>
+                  <DisabledByDefaultIcon className="close" />
+                </button>
+              </>
+            )}
+            {!isInputVisible && (
+              <button
+                className="icon-button"
+                onClick={() => {
+                  setInputVisible(!isInputVisible);
+                }}>
+                <AddBoxIcon />
+              </button>
+            )}
+            {theme === "light" ? (
+              <button style={{ marginLeft: "auto" }} className="icon-button" onClick={handleButtonClick}>
+                <LightMode onClick={handleButtonClick} />
+              </button>
+            ) : (
+              <button style={{ marginLeft: "auto" }} className="icon-button" onClick={handleButtonClick}>
+                <DarkMode onClick={handleButtonClick} />
+              </button>
+            )}
+            <button className="icon-button" onClick={handleLogoutClick}>
+              <Logout />
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
@@ -220,7 +251,7 @@ const BoardContent = ({ board, onBoardDelete, handleChangeBoardTitle }) => {
               )}
             </TabContent>
             <TabContent tabName="archive" activeTab={activeTab}>
-              <Archive boardId={board.id}></Archive> 
+              <Archive boardId={board.id}></Archive>
             </TabContent>
             <TabContent tabName="gantt" activeTab={activeTab}>
               <GanttChart data={states}></GanttChart>
@@ -405,4 +436,49 @@ const TabContent = ({ tabName, activeTab, children }) => {
     return <div className="slct-tab">{children}</div>;
   }
   return null;
+};
+
+const Archive = ({ boardId }) => {
+  // const { boardId } = useParams();
+  const queryClient = useQueryClient();
+  const { data: userId, isLoading: isUserIdLoading } = useQuery("userId", fetchUserId, {
+    refetchOnWindowFocus: false,
+    keepPreviousData: true,
+  });
+  const { data: isArchivedTasks, isLoading: isIsArchivedTasksLoading } = useQuery("isArchivedTasks", () => getIsArchivedTasks(userId, boardId), {
+    refetchOnWindowFocus: false,
+    keepPreviousData: true,
+  });
+
+  if (isIsArchivedTasksLoading) {
+    return <div></div>;
+  }
+
+  return (
+    <div>
+      <main class="grid-container">
+        {isArchivedTasks.length === 0 ? (
+          <div class="card">
+            <p>В архиве пусто!</p>
+          </div>
+        ) : (
+          <>
+            {isArchivedTasks.map((task) => (
+              <div class="card" key={task.id}>
+                <h3>{task.title}</h3>
+                <p>{task.description}</p>
+                <button
+                  onClick={async () => {
+                    await taskChangeArchivingStatus(userId, boardId, task.stateId, task.id, false);
+                    await queryClient.invalidateQueries(["isArchivedTasks"]);
+                  }}>
+                  Восстановить
+                </button>
+              </div>
+            ))}
+          </>
+        )}
+      </main>
+    </div>
+  );
 };

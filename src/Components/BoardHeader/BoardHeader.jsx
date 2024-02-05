@@ -10,10 +10,10 @@ import ArchiveIcon from "@mui/icons-material/Archive";
 import SettingsAccessibilityIcon from "@mui/icons-material/SettingsAccessibility";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { addState, addUserInBoard, createPriority, createRole, deleteBoard, fetchUsersByBoard, getRoles, updateBoard, updateRole } from "../../api";
-import MyModal from "../MyModal";
+import MyModal from "../MyModal/MyModal";
 import Notification from "../Notification";
-import Dropdown from "../Dropdown";
-import Button from "../Button";
+import Dropdown from "../Dropdown/Dropdown";
+import Button from "../Button/Button";
 import { CheckBox, DisabledByDefault } from "@mui/icons-material";
 import "./BoardHeader.css";
 
@@ -118,7 +118,7 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId,
   const handleSaveClick = () => {
     if (newTitle) {
       console.log(newTitle);
-      handleChangeBoardTitle(board.id, newTitle)
+      handleChangeBoardTitle(board.id, newTitle);
       updateBoardMutation.mutate(newTitle);
       setIsEditing(false);
     }
@@ -251,6 +251,57 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId,
         <Notification status="error" open={openNotifErrorUser}>
           Ошибка! Пользователь не найден
         </Notification>
+
+        <MyModal open={openAddSectionModal} onClose={handleCloseAddSectionModal} header="Новая секция">
+          <form onSubmit={handleAddState}>
+            <input required type="text" name="title" placeholder="Заголовок" />
+            <button type="submit">Добавить секцию</button>
+          </form>
+        </MyModal>
+        <MyModal open={openAddUserModal} onClose={handleCloseAddUserModal} header="Добавить пользователя">
+          <form onSubmit={(event) => handleAddUserInBoard(event, board.id)} className="flex flex-col">
+            <input required className="" type="text" name="userId" placeholder="userId" />
+            <button type="submit" className="w-[50%] mt-3 self-end">
+              Добавить пользователя
+            </button>
+          </form>
+        </MyModal>
+        <MyModal open={openPriorityModal} onClose={handleClosePriorityModal} header="Создать новый приоритет">
+          <>
+            {priorities.map((priority, index) => (
+              // <div
+              //   key={priority?.id}
+              //   style={{ borderColor: priority?.color, color: priority?.color, fontSize: "12px" }}
+              //   className="label h-[20px] w-min rounded-[999px] px-[8px] border-[1px] items-center mb-[5px]">
+              //   {priority?.name}
+              // </div>
+              <div
+                key={priority?.id}
+                style={{ borderColor: priority?.color, backgroundColor: priority?.color, fontSize: "12px" }}
+                className=" label h-[35px] rounded-[5px] px-[8px] border-[1px] items-center mb-[5px] font-bold text-3xl text-black inline-block">
+                {priority?.name}
+              </div>
+            ))}
+          </>
+
+          <form onSubmit={(event) => createPriorityForBoard(event, board.id)} className=" space-y-3">
+            <div>
+              <input required className="w-[50%]" type="text" name="name" placeholder="Наименование" />
+              <div>
+                <label>Индекс приоритета от 1 до 99: </label>
+                <input type="number" name="index" min="1" max="99" style={{ width: "40px", height: "20px", padding: "0px" }} />
+              </div>
+            </div>
+
+            <div className="flex flex-row space-x-3">
+              <input className="" type="color" name="color" value={selectedColor} onChange={handleColorChange} />
+              <label>Цвет</label>
+            </div>
+            <button type="submit" className="w-[50%]">
+              Создать приоритет
+            </button>
+          </form>
+        </MyModal>
         <MyModal open={openRolesModal} onClose={handleCloseRolesModal} header="Роли">
           <form onSubmit={(event) => createRoleForBoard(event, board.id)}>
             <div className="w-96 pt-5 rounded-lg">
@@ -316,53 +367,6 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId,
             </li>
           ))}
         </MyModal>
-        <MyModal open={openAddUserModal} onClose={handleCloseAddUserModal} header="Добавить пользователя">
-          <form onSubmit={(event) => handleAddUserInBoard(event, board.id)} className="flex flex-col">
-            <input required className="" type="text" name="userId" placeholder="userId" />
-            <button type="submit" className="w-[50%] mt-3 self-end">
-              Добавить пользователя
-            </button>
-          </form>
-        </MyModal>
-        <MyModal open={openPriorityModal} onClose={handleClosePriorityModal} header="Создать новый приоритет">
-          <div className="">
-            {priorities.map((priority, index) => (
-              // <div
-              //   key={priority?.id}
-              //   style={{ borderColor: priority?.color, color: priority?.color, fontSize: "12px" }}
-              //   className="label h-[20px] w-min rounded-[999px] px-[8px] border-[1px] items-center mb-[5px]">
-              //   {priority?.name}
-              // </div>
-              <div
-                key={priority?.id}
-                style={{ borderColor: priority?.color, backgroundColor: priority?.color, fontSize: "12px" }}
-                className="  label h-[35px] rounded-[5px] px-[8px] border-[1px] items-center mb-[5px] font-bold text-3xl text-black inline-block">
-                {priority?.name}
-              </div>
-            ))}
-          </div>
-
-          <form onSubmit={(event) => createPriorityForBoard(event, board.id)} className=" space-y-3">
-            <div className="space-x-3">
-              <input required className="w-[50%]" type="text" name="name" placeholder="Наименование" />
-              <input type="number" id="tentacles" name="index" min="1" max="99" />
-            </div>
-
-            <div className="flex flex-row space-x-3">
-              <input className="" type="color" name="color" value={selectedColor} onChange={handleColorChange} />
-              <label>Цвет</label>
-            </div>
-            <button type="submit" className="w-[50%]">
-              Создать приоритет
-            </button>
-          </form>
-        </MyModal>
-        <MyModal open={openAddSectionModal} onClose={handleCloseAddSectionModal} header="Новая секция">
-          <form onSubmit={handleAddState} style={{display: "flex", flexDirection: "column"}}>
-            <input style={{margin: "0px"}} required type="text" name="title" placeholder="Заголовок" />
-            <button type="submit">Добавить секцию</button>
-          </form>
-        </MyModal>
       </>
       <div style={{ display: "flex", alignItems: "center" }}>
         {isEditing ? (
@@ -378,14 +382,14 @@ const BoardHeader = ({ board, isOwner, userId, priorities, currentRole, boardId,
             <h1>{board.title}</h1>
             {/* {console.log(currentRole.canEditBoardInfo)} */}
             {currentRole.canEditBoardInfo || (isOwner && <EditIcon onClick={handleEditClick} />)}
-            <Dropdown>
-              {isOwner ? (
+            {isOwner ? (
+              <Dropdown>
                 <p onClick={() => onBoardDelete(boardId)}>
                   <DeleteForeverIcon />
                   Удалить
                 </p>
-              ) : null}
-            </Dropdown>
+              </Dropdown>
+            ) : null}
           </>
         )}
 
@@ -450,3 +454,4 @@ function stringAvatar(name) {
     children: `${name[0][0] + name[1][0]}`,
   };
 }
+

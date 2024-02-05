@@ -25,8 +25,14 @@ input[type="text"] {
   border-radius: 3px;
   outline: none;
   margin: 0px 0px 0px 16px;
+  border: 1px solid var(--accent-color);
 }
-
+input[type="text"]:focus {
+  border-radius: 3px;
+  outline: none;
+  margin: 0px 0px 0px 16px;
+  border: 1px solid var(--accent-color);
+}
 .ok {
   background-color: green;
   border-radius: 5px;
@@ -40,7 +46,6 @@ input[type="text"] {
 .columns {
   display: flex;
   gap: 25px;
-
 }
 
 .slct-tab {
@@ -98,3 +103,38 @@ input[type="text"] {
   -webkit-box-shadow: 10px 0 0 0 #fff;
   box-shadow: 10px 0 0 0 #fff;
 } */
+.grid-container {
+  margin: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Гибкое количество столбцов */
+  gap: 10px; /* Расстояние между карточками */
+}
+
+.card {
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.card h3 {
+  font-size: 1.2em;
+  color: #333;
+}
+
+.card p {
+  color: #666;
+}
+
+.card button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.card button:hover {
+  background-color: #0056b3;
+}

@@ -1,5 +1,5 @@
 import "./App.css";
-import Board from "./Pages/Board";
+
 import ThemeContext from "./ThemeContext";
 import LoginPage from "./Pages/Login/LoginPage";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
@@ -67,7 +67,7 @@ function App() {
                   </ThemeContext.Provider>
                 </RequireAuth>
               }></Route>
-            <Route
+            {/* <Route
               path="boards/:boardId"
               element={
                 <RequireAuth>
@@ -84,7 +84,7 @@ function App() {
                     <Archive />
                   </ThemeContext.Provider>
                 </RequireAuth>
-              }></Route>
+              }></Route> */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/registration" element={<RegistrationPage />} />
           </Route>

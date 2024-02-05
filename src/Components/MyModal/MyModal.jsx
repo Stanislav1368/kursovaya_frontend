@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import "./MyModal.css";
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
 const MyModal = ({ open, onClose, children, header }) => {
   const handleClose = () => {
@@ -25,15 +27,15 @@ const MyModal = ({ open, onClose, children, header }) => {
 
   return (
     open && (
-      <div className="modal-container" onClick={handleClose}>
+      <div className="modal-container">
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
           <div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
             {header && <h3 className="text-2xl font-bold">{header}</h3>}
-            <span style={{cursor: "pointer"}} onClick={handleClose}>
-              ✕
-            </span>
+
+              <CloseRoundedIcon  style={{cursor: "pointer", marginLeft: "20px", color: "red"}} onClick={handleClose}/>
+
           </div>
-          <div className="pt-[20px]">{children}</div>
+          <div className="modal-body">{children}</div>
         </div>
       </div>
     )

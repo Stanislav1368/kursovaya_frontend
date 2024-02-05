@@ -1,13 +1,10 @@
 // State.js
-import React, { useState } from "react";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import React, { useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
-import MyModal from "../Components/MyModal";
-import Task from "./Task/Task";
-import { ArrowLeft, ArrowRight } from "@mui/icons-material";
-import Dropdown from "../Components/Dropdown";
-import { addTask, getTasks } from "../api";
-import Notification from "./Notification";
+import MyModal from "../MyModal/MyModal";
+import Task from "../Task/Task";
+import SocketApi, { addTask, getTasks } from "../../api";
+import Notification from "../Notification";
 import { useQuery, useQueryClient } from "react-query";
 import "./Column.css";
 
@@ -32,6 +29,18 @@ const Column = ({
   } = useQuery(["tasks", userId, boardId, state.id], () =>
     getTasks(userId, boardId, state.id).then((data) => data.filter((task) => !task.isArchived))
   );
+  useEffect(() => {
+    SocketApi.createConnection();
+    SocketApi.socket.on("newTask", () => {
+      queryClient.invalidateQueries(["tasks"]);
+    });
+    SocketApi.socket.on("deleteTask", () => {
+      queryClient.invalidateQueries(["tasks"]);
+    });
+    return () => {
+      SocketApi.socket.off("deleteTask");
+    };
+  }, []);
   const queryClient = useQueryClient();
   const [selectedStateId, setSelectedStateId] = useState();
   const [openTaskModal, setOpenTaskModal] = useState(false);
@@ -103,7 +112,7 @@ const Column = ({
         Задача успешно добавлена
       </Notification>
       <MyModal open={openTaskModal} onClose={handleCloseTaskModal} header="Новая задача">
-        <form onSubmit={(event) => handleAddTask(event, state.id)}  style={{display: "flex", flexDirection: "column"}}>
+        <form onSubmit={(event) => handleAddTask(event, state.id)} style={{ display: "flex", flexDirection: "column" }}>
           <div className="mb-4">
             <input required className="rounded-md p-2" type="text" name="title" placeholder="Title" />
           </div>
@@ -140,7 +149,7 @@ const Column = ({
           </button>
         </form>
       </MyModal>
-      <div className="column-header" >
+      <div className="column-header">
         <div>{state.title}</div>
         <AddIcon className="" onClick={() => handleOpenTaskModal(state.id)} />
       </div>

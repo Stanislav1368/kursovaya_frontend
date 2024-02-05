@@ -1,0 +1,19 @@
+.modal-body form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+} 
+
+.modal-body form input {
+    margin: 0;
+} 
+.modal-body form input:focus {
+    margin: 0;
+} 
+.modal-body form button {
+    background-color: var(--accent-color);
+    color: var(--background-color);
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+} 
